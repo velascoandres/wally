@@ -2,15 +2,20 @@ import { Outlet } from 'react-router-dom'
 
 import { Images, ListVideo } from 'lucide-react'
 
-import { TabLink, TabRouter } from '@/components/router/tab-router'
+import { TabLink, TabRouter } from '@/components/navigation/tab-router'
 import { ModeToggle } from '@/components/theme/theme-mode'
 import { ThemeProvider } from '@/components/theme/theme-provider'
+import { CommandMenu } from '@/components/navigation/command-menu'
 
 const Root = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="min-h-screen w-full flex flex-col items-center gap-2 px-4 pb-4">
-        <ModeToggle />
+      <div className="min-h-screen w-full flex flex-col items-center gap-2 pb-4">
+        <header className="inline-flex gap-2 justify-start w-full px-2 py-1 items-center z-50">
+          <h1 className="text-2xl font-bold">Wally</h1>
+          <ModeToggle />
+          <CommandMenu />
+        </header>
         <TabRouter>
           <TabLink path="/">
             <div className="flex flex-row items-center justify-center gap-1">
@@ -23,7 +28,7 @@ const Root = () => {
             </div>
           </TabLink>
         </TabRouter>
-        <main className="rounded-md border border-border w-full flex-1">
+        <main className="w-full flex-1">
           <Outlet />
         </main>
       </div>

@@ -5,9 +5,9 @@ const GalleryView = () => {
   return (
     <div className="flex flex-col gap-2">
       <header className="sticky top-0 z-50 bg-background/40 backdrop-blur-md">
-        <SearchBox onSearch={() => null} />
+        <SearchBox placeholder="Search in gallery" onSearch={() => null} />
       </header>
-      <div className="flex flex-row flex-wrap gap-2 mx-5 py-4">
+      <div className="flex flex-row flex-wrap gap-2 mx-5 py-4 justify-center">
         <PictureCard
           isDesktopPicture
           name="test.jpg"

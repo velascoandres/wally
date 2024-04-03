@@ -8,7 +8,7 @@ const DEFAULT_CONFIG: Config = Config {
     picture_config: PictureConfig {
         current_picture: None,
         playlist_enable: false,
-        playlist_time: 0,
+        playlist_time: 30,
     }
 }; 
 

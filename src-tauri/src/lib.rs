@@ -1,3 +1,4 @@
 pub mod picture;
-pub mod settings;
+pub mod config;
 pub mod db;
+pub mod common;

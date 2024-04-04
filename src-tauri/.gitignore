@@ -6,3 +6,5 @@
 # will have schema files for capabilities auto-completion
 /gen/schemas
 generated-config.toml
+.env
+wally.db*

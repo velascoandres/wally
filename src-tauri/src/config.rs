@@ -46,7 +46,6 @@ impl Config {
                         println!("[CONFIG] Config loaded");
                         loaded_config
                     },
-                    // Handle the `error` case.
                     Err(_) => {
                         println!("[CONFIG] Error on deserializing config. Using default config");
                         DEFAULT_CONFIG

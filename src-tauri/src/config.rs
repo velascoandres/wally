@@ -4,7 +4,7 @@ use toml;
 
 const CONFIG_PATH: &str = "./generated-config.toml";
 
-const DEFAULT_CONFIG: Config = Config {
+const DEFAULT_CONFIG: ConfigService = ConfigService {
     picture_config: PictureConfig {
         current_picture: None,
         playlist_enable: false,
@@ -14,19 +14,19 @@ const DEFAULT_CONFIG: Config = Config {
 
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct Config {
+pub struct ConfigService {
     picture_config: PictureConfig,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct PictureConfig {
-    current_picture: Option<String>,
+    current_picture: Option<i64>,
     playlist_enable: bool,
     playlist_time: u64,
 }
 
-impl Config {
-    pub fn set_picture(&mut self, picture_id: String) {
+impl ConfigService {
+    pub fn set_picture(&mut self, picture_id: i64) {
         self.picture_config.current_picture = Some(picture_id);
         self.persist_config();
     }

@@ -40,9 +40,9 @@ pub struct PopulatedPlaylist {
 
 #[derive(Deserialize, Debug, Clone)]
 
-pub struct CreatePlaylistItem {
+pub struct CreateUpdatePlaylist {
     pub picture_id: i64,
-    pub order: i64,
+    pub picture_order: i64,
 }
 
 #[derive(Deserialize, Debug, Clone)]

@@ -1,20 +1,23 @@
 use std::sync::Arc;
-use sqlx::SqlitePool;
-use crate::{db::ConnectionPool, common::RepositoryError, common::FindResponse};
-use crate::picture::sql::PLAYLIST_JOIN_QUERY;
-use super::models::{CreatePlaylistItem, CreateUpdatePicture, Picture, PopulatedPlaylist, SearchPicture};
 
+use sqlx::SqlitePool;
+
+use crate::{common::FindResponse, common::RepositoryError, db::ConnectionPool};
+use crate::common::Repository;
+use crate::picture::sql::PLAYLIST_JOIN_QUERY;
+
+use super::models::{CreateUpdatePicture, CreateUpdatePlaylist, Picture, Playlist, PopulatedPlaylist, SearchPicture};
 
 pub struct PictureRepository {
-    conn: Arc<SqlitePool>,
+    conn: Arc<&'static SqlitePool>,
 }
 
 pub struct PlaylistRepository {
-    conn: Arc<SqlitePool>,
+    conn: Arc<&'static SqlitePool>,
 }
 
 impl PictureRepository {
-    pub fn new(conn: SqlitePool) -> Self {
+    pub fn new(conn: &SqlitePool) -> Self {
         PictureRepository {
             conn: Arc::new(conn)
         }
@@ -23,8 +26,64 @@ impl PictureRepository {
     fn conn(&self) -> &ConnectionPool {
         &self.conn
     }
+}
 
-    pub async fn find_by_id(&mut self, id: &i64) -> Result<Picture, RepositoryError> {
+
+impl PlaylistRepository {
+    pub fn new(conn: &SqlitePool) -> Self {
+        PlaylistRepository {
+            conn: Arc::new(conn)
+        }
+    }
+
+    fn conn(&self) -> &ConnectionPool {
+        &self.conn
+    }
+}
+
+
+impl Repository<Picture> for PictureRepository {
+    async fn create(&mut self, picture: CreateUpdatePicture) -> Result<Picture, RepositoryError> {
+        let result =
+            sqlx::query("INSERT INTO PICTURE (name, file) values ($1, $2, $3)")
+                .bind(&picture.name)
+                .bind(&picture.file)
+                .execute(self.conn())
+                .await;
+        match result {
+            Ok(insert_result) => self.find_by_id(insert_result.last_insert_rowid()).await,
+            Err(err) => Err(RepositoryError::CreateError(format!("{err}"))),
+        }
+    }
+
+
+    async fn update(&mut self, id: i64, update_body: CreateUpdatePicture) -> Result<Picture, RepositoryError> {
+        let update_result = sqlx::query("UPDATE PICTURE SET name=$1, file=$2 WHERE id=$3")
+            .bind(update_body.name)
+            .bind(update_body.file)
+            .bind(id)
+            .execute(self.conn())
+            .await;
+
+        match update_result {
+            Ok(result) => self.find_by_id(result.last_insert_rowid()),
+            Err(err) => Err(RepositoryError::UpdateError(err.to_string()))
+        }
+    }
+
+    async fn remove(&mut self, id: &i64) -> Result<i64, RepositoryError> {
+        let delete_result = sqlx::query("DELETE FROM PICTURE WHERE id='$1'")
+            .bind(id)
+            .execute(self.conn())
+            .await;
+
+        match delete_result {
+            Ok(_) => Ok(1),
+            Err(err) => Err(RepositoryError::RemoveError(err.to_string()))
+        }
+    }
+
+    async fn find_by_id(&mut self, id: i64) -> Result<Picture, RepositoryError> {
         let fetch_result = sqlx::query_as::<_, Picture>("SELECT * FROM PICTURES WHERE id=$1")
             .bind(id)
             .fetch_one(self.conn()).await;
@@ -35,21 +94,7 @@ impl PictureRepository {
         }
     }
 
-
-    pub async fn create(&mut self, picture: CreateUpdatePicture) -> Result<Picture, RepositoryError> {
-        let result =
-            sqlx::query("INSERT INTO PICTURE (name, file) values ($1, $2, $3)")
-                .bind(&picture.name)
-                .bind(&picture.file)
-                .execute(self.conn())
-                .await;
-        match result {
-            Ok(insert_result) => self.find_by_id(&insert_result.last_insert_rowid()).await,
-            Err(err) => Err(RepositoryError::CreateError(format!("{err}"))),
-        }
-    }
-
-    pub async fn find_many(&self, params: SearchPicture) -> Result<FindResponse<Picture>, RepositoryError> {
+    async fn find_many(&self, params: SearchPicture) -> Result<FindResponse<Picture>, RepositoryError> {
         let search = params.search;
 
         let condition = "WHERE (name LIKE '%'|| $1 ||'%' OR $1 IS NULL)";
@@ -77,9 +122,38 @@ impl PictureRepository {
             Err(err) => Err(RepositoryError::FindError(err.to_string()))
         }
     }
+}
 
-    pub async fn remove(&mut self, id: &i64) -> Result<i64, RepositoryError> {
-        let delete_result = sqlx::query("DELETE FROM PICTURE WHERE id='$1'")
+impl Repository<PopulatedPlaylist> for Playlist {
+    async fn create(&mut self, picture: CreateUpdatePlaylist) -> Result<PopulatedPlaylist, RepositoryError> {
+        let result =
+            sqlx::query("INSERT INTO PLAYLIST (id, name, file) values ($1, $2, $3)")
+                .bind(&picture.picture_id)
+                .bind(&picture.picture_order)
+                .execute(self.conn())
+                .await;
+        match result {
+            Ok(insert_result) => self.find_by_id(&insert_result.last_insert_rowid()).await,
+            Err(err) => Err(RepositoryError::CreateError(format!("{err}"))),
+        }
+    }
+
+    async fn update(&mut self, id: i64, update_body: CreateUpdatePlaylist) -> Result<Picture, RepositoryError> {
+        let update_result = sqlx::query("UPDATE PLAYLIST SET pictureId=$1, pictureOrder=$2 WHERE id=$3")
+            .bind(update_body.picture_id)
+            .bind(update_body.picture_order)
+            .bind(id)
+            .execute(self.conn())
+            .await;
+
+        match update_result {
+            Ok(result) => self.find_by_id(result.last_insert_rowid()),
+            Err(err) => Err(RepositoryError::UpdateError(err.to_string()))
+        }
+    }
+
+    async fn remove(&mut self, id: i64) -> Result<i64, RepositoryError> {
+        let delete_result = sqlx::query("DELETE FROM PLAYLIST WHERE id=$1")
             .bind(id)
             .execute(self.conn())
             .await;
@@ -89,21 +163,8 @@ impl PictureRepository {
             Err(err) => Err(RepositoryError::RemoveError(err.to_string()))
         }
     }
-}
 
-
-impl PlaylistRepository {
-    pub fn new(conn: SqlitePool) -> Self {
-        PlaylistRepository {
-            conn: Arc::new(conn)
-        }
-    }
-
-    fn conn(&self) -> &ConnectionPool {
-        &self.conn
-    }
-
-    pub async fn find_by_id(&mut self, id: &i64) -> Result<PopulatedPlaylist, RepositoryError> {
+    async fn find_by_id(&mut self, id: &i64) -> Result<PopulatedPlaylist, RepositoryError> {
         let search_query = format!("{PLAYLIST_JOIN_QUERY} WHERE id=$1");
 
         let fetch_result = sqlx::query_as::<_, PopulatedPlaylist>(search_query.as_str())
@@ -116,21 +177,7 @@ impl PlaylistRepository {
         }
     }
 
-    pub async fn create(&mut self, picture: CreatePlaylistItem) -> Result<PopulatedPlaylist, RepositoryError> {
-        let result =
-            sqlx::query("INSERT INTO PLAYLIST (id, name, file) values ($1, $2, $3)")
-                .bind(&picture.picture_id)
-                .bind(&picture.order)
-                .execute(self.conn())
-                .await;
-        match result {
-            Ok(insert_result) => self.find_by_id(&insert_result.last_insert_rowid()).await,
-            Err(err) => Err(RepositoryError::CreateError(format!("{err}"))),
-        }
-    }
-
-    pub async fn find_many(&self) -> Result<FindResponse<PopulatedPlaylist>, RepositoryError> {
-        ;
+    async fn find_many(&self, _: Option<None>) -> Result<FindResponse<PopulatedPlaylist>, RepositoryError> {
         let count_query = "SELECT COUNT(id) FROM PLAYLIST";
 
         let data_result = sqlx::query_as
@@ -152,17 +199,4 @@ impl PlaylistRepository {
             Err(err) => Err(RepositoryError::FindError(err.to_string()))
         }
     }
-
-    pub async fn remove(&mut self, id: i64) -> Result<i64, RepositoryError> {
-        let delete_result = sqlx::query("DELETE FROM PLAYLIST WHERE id=$1")
-            .bind(id)
-            .execute(self.conn())
-            .await;
-
-        match delete_result {
-            Ok(_) => Ok(1),
-            Err(err) => Err(RepositoryError::RemoveError(err.to_string()))
-        }
-    }
 }
-

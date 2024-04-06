@@ -76,16 +76,21 @@ pub fn listen_changes(path: &str) -> NotifyResult<()>{
 
     watcher.watch(dir_path, RecursiveMode::Recursive).unwrap();
 
-    println!("Watching '{:?}'", path);
 
-    loop {
-        match receiver.recv() {
+    for rev in receiver {
+        println!("Watching '{:?}'", path);
+
+        match rev {
             Ok(event) => {
                 println!("Event: {:?}", event);
             }
-            Err(e) => println!("Error: {:?}", e),
+            Err(e) => {
+                println!("Error: {:?}", e);
+            },
         }
     }
+
+    Ok(())
 }
 
 

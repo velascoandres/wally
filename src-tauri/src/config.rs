@@ -54,8 +54,8 @@ impl ConfigService {
         Ok(())
     }
 
-    pub fn dir_path(&self) -> &str {
-        &self.picture_config.folder_dir
+    pub fn dir_path(&self) -> String {
+        self.picture_config.folder_dir.clone()
     }
 
     pub fn change_folder_dir(&mut self, new_dir: &str){

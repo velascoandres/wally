@@ -7,12 +7,17 @@ const GalleryView = () => {
     await invoke('change_dir', { dir: '/Users/andresvelasco/Documents/pictures/wallpapers' })
   }
 
+  const listen = async () => {
+    await invoke('listen_folder')
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <header className="sticky top-0 z-50 bg-background/40 backdrop-blur-md">
         <SearchBox placeholder="Search in gallery" onSearch={() => null} />
       </header>
       <div className="flex flex-row flex-wrap gap-2 mx-5 py-4 justify-center">
+        <Button onClick={listen}>Listen</Button>
         <Button onClick={change_path}>Change path</Button>
         {/* <PictureCard
           isDesktopPicture

@@ -5,14 +5,8 @@ import { Images, ListVideo } from 'lucide-react'
 import { TabLink, TabRouter } from '@/components/navigation/tab-router'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import { CommandMenu } from '@/components/navigation/command-menu'
-import { useEffect } from 'react'
-import { invoke } from '@tauri-apps/api'
 
 const Root = () => {
-  useEffect(() => {
-    void invoke('listen_folder')
-  }, [])
-
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className="min-h-screen w-full flex flex-col items-center gap-2 pb-4">

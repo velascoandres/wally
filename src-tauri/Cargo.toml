@@ -16,16 +16,8 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 toml = "0.8.12"
 serde_derive = "1.0.197"
-sqlx = { version = "0.7.3", features = ["runtime-async-std-native-tls", "sqlite", "chrono"] }
 tokio = {version = "1.37.0", features = ["full"] }
-chrono = { version = "0.4.34", features = ["serde"] }
-dotenv = "0.15.0"
-dotenv_codegen = "0.15.0"
-
-
-[dependencies.uuid]
-version = "1.8.0"
-features = [ "v4", "fast-rng"]
+notify = "6.1.1"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

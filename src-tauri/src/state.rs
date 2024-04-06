@@ -1,7 +1,6 @@
-use crate::config::ConfigService;
-use crate::picture::services::PictureService;
+use crate::{config::ConfigService, files::FileRepository};
 
 pub struct AppState {
     pub config_service: ConfigService,
-    pub picture_service: PictureService
+    pub file_repository: FileRepository
 }

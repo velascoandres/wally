@@ -1,25 +1,32 @@
-use std::sync::{Arc, Mutex};
-use tauri::State;
-use crate::state::AppState;
+use std::sync::Arc;
+
+use crate::{files, state::AppState};
 
 #[tauri::command]
-pub fn change_dir(dir: String, state: State<Arc<Mutex<AppState>>>){
-    let state_clone = Arc::clone(&state);
+pub fn change_dir(dir: String, state: tauri::State<AppState>){
+    let config = Arc::clone(&state.0);
 
-    println!("Here");
+    let mut write_config = config.write().unwrap();
 
-    // clone.lock().unwrap().config_service.change_folder_dir(dir.as_str());
-
-    let mut locked_state = match state_clone.lock() {
-        Ok(guard) => guard,
-        Err(_) => {
-            println!("Mutex is poisoned, skipping...");
-            return; // Salimos de la función si el mutex está en un estado de error
-        }
-    };
-
-    locked_state.config_service.change_folder_dir(&dir);
+    write_config.set_folder_dir(&dir);
     println!("[CONFIG] file dir changed: {}", dir);
 }
 
+
+#[tauri::command]
+pub fn listen_folder(state: tauri::State<AppState>) {
+    let config_lock = Arc::clone(&state.0);
+
+
+    std::thread::spawn(move || {
+        let config_guard = config_lock.read().unwrap();
+        let path = config_guard.get_folder_dir().clone();
+
+        println!("Listening: {}", path);
+
+        std::mem::drop(config_guard);
+
+        let _ = files::listen_changes(path.as_str());
+    });
+}
 

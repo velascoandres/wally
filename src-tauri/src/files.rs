@@ -7,7 +7,7 @@ pub enum FileError {
 }
 
 pub struct FileRepository {
-    file_paths: Vec<String>
+    pub file_paths: Vec<String>
 }
 
 impl FileRepository {
@@ -75,7 +75,6 @@ pub fn listen_changes(path: &str) -> NotifyResult<()>{
     let dir_path = Path::new(path);
 
     watcher.watch(dir_path, RecursiveMode::Recursive).unwrap();
-
 
     for rev in receiver {
         println!("Watching '{:?}'", path);

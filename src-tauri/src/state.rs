@@ -1,6 +1,5 @@
-use crate::{config::ConfigService, files::FileRepository};
+use std::sync::{Arc, RwLock};
 
-pub struct AppState {
-    pub config_service: ConfigService,
-    pub file_repository: FileRepository
-}
+use crate::models::app_config::AppConfig;
+
+pub struct AppState(pub Arc<RwLock<AppConfig>>);

@@ -1,3 +1,4 @@
+use notify::Config;
 use serde::{Deserialize, Serialize};
 use std::{fs::{self, File}, io::Write};
 use toml;
@@ -13,30 +14,27 @@ pub enum ConfigError {
 
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct ConfigService {
+pub struct AppConfig {
     picture_config: PictureConfig,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct PictureConfig {
-    folder_dir: String,
     current_picture: Option<String>,
     playlist_enable: bool,
     playlist_time: u64,
-    playlist: Vec<String>
+    playlist: Vec<String>,
+    folder_dir: String
+}
+
+pub struct ConfigService {
+    config: Config
 }
 
 impl ConfigService {
     pub fn set_picture(&mut self, picture_id: &str) {
         self.picture_config.current_picture = Some(String::from(picture_id));
         self.persist_config();
-    }
-
-    fn persist_config(&self){
-        let toml_str = toml::to_string_pretty(self).expect("Failed to serialize to TOML");
-        let mut file = File::create(CONFIG_PATH).expect("Failed to create file");
-
-        file.write_all(toml_str.as_bytes()).expect("Failed to write to file");
     }
 
     pub fn add_to_playlist(&mut self, picture_name: &str) -> Result<(), ConfigError>{
@@ -54,22 +52,12 @@ impl ConfigService {
         Ok(())
     }
 
-    pub fn dir_path(&self) -> String {
-        self.picture_config.folder_dir.clone()
-    }
-
-    pub fn change_folder_dir(&mut self, new_dir: &str){
-        self.picture_config.folder_dir = String::from(new_dir);
-        self.persist_config();
-    }
-
     pub fn load_config() -> Self {
         match fs::read_to_string(CONFIG_PATH){
             Ok(raw_content) => {
                 match toml::from_str(&raw_content) {
                     Ok(loaded_config) => {
                         println!("[CONFIG] Config loaded");
-
                         loaded_config
                     },
                     Err(_) => {
@@ -96,6 +84,13 @@ impl ConfigService {
                 playlist: vec![],
             }
         }
+    }    
+
+    fn persist_config(&self){
+        let toml_str = toml::to_string_pretty(self).expect("Failed to serialize to TOML");
+        let mut file = File::create(CONFIG_PATH).expect("Failed to create file");
+
+        file.write_all(toml_str.as_bytes()).expect("Failed to write to file");
     }
 
     

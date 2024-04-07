@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "simple-bg",
+    "productName": "wally",
     "version": "0.0.0"
   },
   "tauri": {
@@ -19,7 +19,7 @@
     },
     "windows": [
       {
-        "title": "simple-bg",
+        "title": "wally",
         "width": 800,
         "height": 600
       }

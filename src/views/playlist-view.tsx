@@ -14,7 +14,7 @@ const pictures: Picture[] = [
   {
     id: '1',
     name: 'test.jpg',
-    url: 'https://i.blogs.es/a3aea1/bocchi-the-rock/1366_2000.jpeg',
+    url: 'file:///Users/andresvelasco/Documents/pictures/wallpapers/pnDfPrHL-wallha.com.jpg',
   },
   {
     id: '2',

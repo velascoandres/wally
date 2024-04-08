@@ -16,8 +16,8 @@ async fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            commands::listen_folder,
-            commands::change_dir,
+            commands::folder::init_listen,
+            commands::folder::change_folder,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

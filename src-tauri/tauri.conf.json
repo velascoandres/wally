@@ -15,7 +15,14 @@
       "shell": {
         "all": false,
         "open": true
-      }
+      },
+      "protocol": {
+        "asset": true,
+        "assetScope": [
+            "$DOCUMENT/**",
+            "$DESKTOP/*"
+        ]
+    }
     },
     "windows": [
       {

@@ -4,11 +4,11 @@ import { invoke } from '@tauri-apps/api'
 
 const GalleryView = () => {
   const change_path = async () => {
-    await invoke('change_dir', { dir: '/Users/andresvelasco/Documents/pictures/wallpapers' })
+    await invoke('change_folder', { dir: '/Users/andresvelasco/Documents/pictures/wallpapers' })
   }
 
   const listen = async () => {
-    await invoke('listen_folder')
+    await invoke('init_listen')
   }
 
   return (

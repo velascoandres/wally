@@ -1,14 +1,12 @@
 use crate::{state::AppState, utils};
 use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
-use std::{
-    path::Path,
-    sync::{mpsc::channel, Arc},
-};
+use serde::Serialize;
+use std::{path::Path, sync::{mpsc::channel, Arc}};
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Serialize)]
 struct Payload<T> {
     message: String,
-    data: T,
+    data: Vec<T>,
 }
 
 #[tauri::command]
@@ -19,6 +17,7 @@ pub fn change_folder(window: tauri::Window, dir: String, state: tauri::State<App
 
     write_config.set_folder_dir(&dir);
     println!("[CONFIG] file dir changed: {}", dir);
+
     let files = utils::get_image_files(&dir).unwrap();
 
     window
@@ -60,14 +59,13 @@ pub fn init_listen(window: tauri::Window, state: tauri::State<AppState>) {
             watcher
                 .watch(Path::new(&current_path), RecursiveMode::NonRecursive)
                 .unwrap();
-            println!("Listening: {}", current_path);
 
             std::mem::drop(config_guard);
 
             if let Ok(event) = receiver.recv_timeout(std::time::Duration::from_secs(1)) {
                 println!("Event: {:?}", event);
                 let files = utils::get_image_files(&current_path).unwrap();
-
+                
                 window
                     .emit(
                         "files",

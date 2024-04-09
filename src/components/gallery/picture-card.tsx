@@ -1,4 +1,4 @@
-import { Fullscreen, Split, CopyPlus, Trash, Wallpaper, Star } from 'lucide-react'
+import { Fullscreen, Wallpaper, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface Props {
@@ -6,12 +6,6 @@ interface Props {
   imageUrl: string
   inPlaylist?: boolean
   isDesktopPicture?: boolean
-}
-
-interface OptionTooltipProps {
-  label: string
-  icon: React.ReactNode
-  onClick?: () => void
 }
 
 export const PictureCard = ({ name, imageUrl, inPlaylist, isDesktopPicture }: Props) => {
@@ -26,14 +20,14 @@ export const PictureCard = ({ name, imageUrl, inPlaylist, isDesktopPicture }: Pr
             </Button>
 
             <div className="inline-flex gap-2 justify-center text-white">
-              <OptionTooltip label="Preview" icon={<Fullscreen className="h-5 w-5" />} />
-              {inPlaylist ? (
-                <OptionTooltip label="kick of playlist" icon={<Split className="h-5 w-5" />} />
-              ) : (
-                <OptionTooltip label="Add to playlist" icon={<CopyPlus className="h-5 w-5" />} />
-              )}
-
-              <OptionTooltip label="Delete" icon={<Trash className="h-5 w-5" />} />
+              <div className="group/tp relative basis-1/3 flex-1">
+                <Button variant="ghost" className="transition ease-in">
+                  <Fullscreen className="h-5 w-5" />
+                </Button>
+                <div className="absolute top-10 rounded-md px-2 py-1 bg-primary text-secondary hidden group-hover/tp:block text-xs">
+                  <span className="w-full">Preview</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -50,18 +44,5 @@ export const PictureCard = ({ name, imageUrl, inPlaylist, isDesktopPicture }: Pr
         {isDesktopPicture && <Star className="w-5 h-5 z-30 absolute top-0 left-1 text-black" fill="yellow" />}
       </article>
     </>
-  )
-}
-
-const OptionTooltip = ({ icon, label }: OptionTooltipProps) => {
-  return (
-    <div className="group/tp relative basis-1/3 flex-1">
-      <Button variant="ghost" className="transition ease-in">
-        {icon}
-      </Button>
-      <div className="absolute top-10 rounded-md px-2 py-1 bg-primary text-secondary hidden group-hover/tp:block text-xs">
-        <span className="w-full">{label}</span>
-      </div>
-    </div>
   )
 }

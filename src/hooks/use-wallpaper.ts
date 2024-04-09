@@ -2,9 +2,9 @@ import { WallpaperContext, type WallpaperContextType } from '@/providers/wallpap
 import { useContext } from 'react'
 
 export const useWallpaper = () => {
-  const { filePaths } = useContext(WallpaperContext) as WallpaperContextType
+  const { wallpapers } = useContext(WallpaperContext) as WallpaperContextType
 
   return {
-    filePaths,
+    wallpapers,
   }
 }

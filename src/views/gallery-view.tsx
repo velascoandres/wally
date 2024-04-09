@@ -1,8 +1,9 @@
+import { PictureCard } from '@/components/gallery/picture-card'
 import { SearchBox } from '@/components/ui/search-box'
 import { useWallpaper } from '@/hooks/use-wallpaper'
 
 const GalleryView = () => {
-  const { filePaths } = useWallpaper()
+  const { wallpapers } = useWallpaper()
 
   return (
     <div className="flex flex-col gap-2">
@@ -10,11 +11,11 @@ const GalleryView = () => {
         <SearchBox placeholder="Search in gallery" onSearch={() => null} />
       </header>
       <div className="flex flex-row flex-wrap gap-2 mx-5 py-4 justify-center">
-        <ul className="flex flex-col list-none">
-          {filePaths.map((path) => (
-            <li key={path}>{path}</li>
+        <section className="flex flex-col list-none gap-2">
+          {wallpapers.map(({ filename, path }) => (
+            <PictureCard key={filename} name={filename} imageUrl={path} />
           ))}
-        </ul>
+        </section>
 
         {/* <PictureCard
           isDesktopPicture

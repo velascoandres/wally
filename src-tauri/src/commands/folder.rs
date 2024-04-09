@@ -4,7 +4,7 @@ use serde::Serialize;
 use std::{path::Path, sync::{mpsc::channel, Arc}};
 
 #[derive(Clone, Serialize)]
-struct Payload<T> {
+struct EventPayload<T> {
     message: String,
     data: Vec<T>,
 }
@@ -23,7 +23,7 @@ pub fn change_folder(window: tauri::Window, dir: String, state: tauri::State<App
     window
         .emit(
             "files",
-            Payload {
+            EventPayload {
                 message: String::from("Loaded files"),
                 data: files,
             },
@@ -63,13 +63,15 @@ pub fn init_listen(window: tauri::Window, state: tauri::State<AppState>) {
             std::mem::drop(config_guard);
 
             if let Ok(event) = receiver.recv_timeout(std::time::Duration::from_secs(1)) {
-                println!("Event: {:?}", event);
+                println!("Event: {:?}", event.unwrap());
                 let files = utils::get_image_files(&current_path).unwrap();
                 
+                println!("{:?}", files);
+
                 window
                     .emit(
                         "files",
-                        Payload {
+                        EventPayload {
                             message: String::from("Loaded files"),
                             data: files,
                         },

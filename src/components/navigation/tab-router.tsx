@@ -8,7 +8,7 @@ interface TabProps {
 }
 
 interface Props {
-  children: React.ReactNode[]
+  children: React.ReactNode
 }
 
 export const TabRouter = ({ children }: Props) => {

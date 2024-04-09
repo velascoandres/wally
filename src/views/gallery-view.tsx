@@ -1,15 +1,8 @@
-import { Button } from '@/components/ui/button'
 import { SearchBox } from '@/components/ui/search-box'
-import { invoke } from '@tauri-apps/api'
+import { useWallpaper } from '@/hooks/use-wallpaper'
 
 const GalleryView = () => {
-  const change_path = async () => {
-    await invoke('change_folder', { dir: '/Users/andresvelasco/Documents/pictures/wallpapers' })
-  }
-
-  const listen = async () => {
-    await invoke('init_listen')
-  }
+  const { filePaths } = useWallpaper()
 
   return (
     <div className="flex flex-col gap-2">
@@ -17,8 +10,12 @@ const GalleryView = () => {
         <SearchBox placeholder="Search in gallery" onSearch={() => null} />
       </header>
       <div className="flex flex-row flex-wrap gap-2 mx-5 py-4 justify-center">
-        <Button onClick={listen}>Listen</Button>
-        <Button onClick={change_path}>Change path</Button>
+        <ul className="flex flex-col list-none">
+          {filePaths.map((path) => (
+            <li key={path}>{path}</li>
+          ))}
+        </ul>
+
         {/* <PictureCard
           isDesktopPicture
           name="test.jpg"

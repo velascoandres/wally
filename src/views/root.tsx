@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 
-import { Images, ListVideo } from 'lucide-react'
+import { Images } from 'lucide-react'
 
 import { TabLink, TabRouter } from '@/components/navigation/tab-router'
 import { ThemeProvider } from '@/components/theme/theme-provider'
@@ -18,11 +18,6 @@ const Root = () => {
           <TabLink path="/">
             <div className="flex flex-row items-center justify-center gap-1">
               <Images className="w-4" /> <span>Gallery</span>
-            </div>
-          </TabLink>
-          <TabLink path="/playlist">
-            <div className="flex flex-row items-center justify-center gap-1">
-              <ListVideo className="w-4" /> <span>Playlist</span>
             </div>
           </TabLink>
         </TabRouter>

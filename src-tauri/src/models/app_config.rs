@@ -5,7 +5,7 @@ use toml;
 const CONFIG_PATH: &str = "./generated_config.toml";
 
 
-#[derive(Deserialize, Serialize, Debug, Default)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct PictureConfig {
     // picture setted as wallpaper
     current_picture: Option<String>,
@@ -22,6 +22,17 @@ pub struct PictureConfig {
 
 pub struct AppConfig {
     pub picture_config: PictureConfig
+}
+
+impl Default for PictureConfig {
+    fn default() -> Self {
+        Self { 
+            current_picture: Default::default(), 
+            playlist_enable: Default::default(), 
+            playlist_time: Default::default(), 
+            folder_dir: String::from(dirs::document_dir().unwrap().to_str().unwrap())
+        }
+    }
 }
 
 impl AppConfig {

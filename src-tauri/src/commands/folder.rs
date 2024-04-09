@@ -6,7 +6,7 @@ use std::{path::Path, sync::{mpsc::channel, Arc}};
 #[derive(Clone, Serialize)]
 struct EventPayload<T> {
     message: String,
-    data: Vec<T>,
+    data: T,
 }
 
 #[tauri::command]
@@ -29,6 +29,17 @@ pub fn change_folder(window: tauri::Window, dir: String, state: tauri::State<App
             },
         )
         .unwrap();
+}
+
+#[tauri::command]
+pub fn get_current_dir(state: tauri::State<AppState>) -> String {
+    let config = Arc::clone(&state.0);
+
+    let config_guard = config.read().unwrap();
+
+    let current_dir = config_guard.get_folder_dir();
+
+    utils::shorten_documents_path(current_dir.clone()).unwrap()
 }
 
 #[tauri::command]
@@ -66,8 +77,6 @@ pub fn init_listen(window: tauri::Window, state: tauri::State<AppState>) {
                 println!("Event: {:?}", event.unwrap());
                 let files = utils::get_image_files(&current_path).unwrap();
                 
-                println!("{:?}", files);
-
                 window
                     .emit(
                         "files",

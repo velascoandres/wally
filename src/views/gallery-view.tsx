@@ -7,7 +7,7 @@ const GalleryView = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <header className="sticky top-0 z-50 bg-background/40 backdrop-blur-md">
+      <header className="sticky top-0 z-30 bg-background/40 backdrop-blur-md">
         <SearchBox placeholder="Search in gallery" onSearch={handleSearch} />
       </header>
       <section className="flex flex-row flex-wrap gap-2 mx-5 py-4 justify-center">

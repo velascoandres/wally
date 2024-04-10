@@ -32,7 +32,8 @@
         "asset": true,
         "assetScope": [
             "$DOCUMENT/**",
-            "$DESKTOP/*"
+            "$DESKTOP/*",
+            "$DOWNLOAD/*"
         ]
     }
     },

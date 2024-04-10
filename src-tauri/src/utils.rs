@@ -1,4 +1,4 @@
-use std::{fs, path::{Path, PathBuf}};
+use std::{fs, path::Path};
 
 use crate::models::wallpaper::Wallpaper;
 
@@ -44,12 +44,4 @@ fn is_image_file(path: &Path) -> bool {
         );
     }
     false
-}
-
-
-pub fn shorten_documents_path(full_path: String) -> Option<String> {
-    let documents_dir = dirs::document_dir()?;
-    let documents_path = PathBuf::from(&full_path);
-    let relative_path = documents_path.strip_prefix(documents_dir).ok()?;
-    Some(relative_path.to_string_lossy().to_string())
 }

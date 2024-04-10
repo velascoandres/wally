@@ -24,9 +24,6 @@ export const PictureCard = ({ name, imageUrl, inPlaylist, isDesktopPicture }: Pr
                 <Button variant="ghost" className="transition ease-in">
                   <Fullscreen className="h-5 w-5" />
                 </Button>
-                <div className="absolute top-10 rounded-md px-2 py-1 bg-primary text-secondary hidden group-hover/tp:block text-xs">
-                  <span className="w-full">Preview</span>
-                </div>
               </div>
             </div>
           </div>
@@ -34,7 +31,7 @@ export const PictureCard = ({ name, imageUrl, inPlaylist, isDesktopPicture }: Pr
         <img
           src={imageUrl}
           alt={name}
-          className="transition ease-in object-cover group-hover:scale-105 h-48 w-72 md:w-96"
+          className="transition ease-in aspect-video object-cover group-hover:scale-105 h-48 w-72 md:w-96"
         />
         {inPlaylist && (
           <span className="absolute bottom-0 right-0 z-30 py-1 px-4 text-xs rounded-tl-md border-neutral-800 border-t border-l bg-indigo-600 text-white">

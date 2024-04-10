@@ -9,6 +9,13 @@ struct EventPayload<T> {
     data: T,
 }
 
+
+#[derive(Clone, Serialize)]
+pub struct Folder {
+    pub dirname: String,
+    pub path: String
+}
+
 #[tauri::command]
 pub fn change_folder(window: tauri::Window, dir: String, state: tauri::State<AppState>) {
     let config = Arc::clone(&state.0);
@@ -32,14 +39,21 @@ pub fn change_folder(window: tauri::Window, dir: String, state: tauri::State<App
 }
 
 #[tauri::command]
-pub fn get_current_dir(state: tauri::State<AppState>) -> String {
+pub fn get_current_dir(state: tauri::State<AppState>) -> Folder {
     let config = Arc::clone(&state.0);
 
     let config_guard = config.read().unwrap();
 
     let current_dir = config_guard.get_folder_dir();
 
-    utils::shorten_documents_path(current_dir.clone()).unwrap()
+    let path = Path::new(current_dir);
+
+    let dirname = path.file_name().unwrap().to_str().unwrap();
+
+    Folder {
+        dirname: String::from(dirname),
+        path: current_dir.clone()
+    }
 }
 
 #[tauri::command]

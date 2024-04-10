@@ -3,6 +3,8 @@ import { convertFileSrc } from '@tauri-apps/api/tauri'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { appWindow } from '@tauri-apps/api/window'
 import { type Event } from '@tauri-apps/api/event'
+import { open } from '@tauri-apps/api/dialog'
+import { documentDir } from '@tauri-apps/api/path'
 
 export interface Wallpaper {
   filename: string
@@ -14,7 +16,7 @@ export interface WallpaperContextType {
   isLoading: boolean
   wallpapers: Wallpaper[]
 
-  changeFolder: (dir: string) => void
+  changeWallpapersFolder: () => void
 }
 
 interface Props {
@@ -37,12 +39,19 @@ export const WallpaperProvider = ({ children }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
   const [currentDir, setCurrentDir] = useState('')
 
-  const changeFolder = (dir: string) => invoke('change_folder', { dir })
-
   const filePathAssetDto = (file: Wallpaper): Wallpaper => ({
     filename: file.filename,
     path: convertFileSrc(file.path),
   })
+
+  const changeWallpapersFolder = async () => {
+    const documentsPath = await documentDir()
+
+    const selectedDir = await open({ defaultPath: documentsPath, directory: true })
+
+    await invoke('change_folder', { dir: selectedDir })
+    await invoke<string>('get_current_dir').then(setCurrentDir)
+  }
 
   useEffect(() => {
     setIsLoading(true)
@@ -64,7 +73,7 @@ export const WallpaperProvider = ({ children }: Props) => {
   }, [])
 
   return (
-    <WallpaperContext.Provider value={{ isLoading, wallpapers, currentDir, changeFolder }}>
+    <WallpaperContext.Provider value={{ isLoading, wallpapers, currentDir, changeWallpapersFolder }}>
       {children}
     </WallpaperContext.Provider>
   )

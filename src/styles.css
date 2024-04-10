@@ -71,6 +71,6 @@
     @apply border-border;
   }
   body {
-    @apply backdrop-blur-sm bg-background/70 text-foreground;
+    @apply backdrop-blur-md bg-background/70 text-foreground;
   }
 }

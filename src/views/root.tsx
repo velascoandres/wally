@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { useWallpaper } from '@/providers/wallpaper-provider'
 
 const Root = () => {
-  const { currentDir } = useWallpaper()
+  const { currentDir, changeWallpapersFolder } = useWallpaper()
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -15,7 +15,7 @@ const Root = () => {
         <header className="inline-flex gap-2 justify-start w-full px-2 py-1 items-center z-50">
           <h1 className="text-2xl font-bold">Wally</h1>
           <CommandMenu />
-          <Button variant="outline" className="sticky bottom-2">
+          <Button onClick={changeWallpapersFolder} variant="outline" className="sticky bottom-2">
             <Folder className="w-4 mr-1" /> {currentDir}
           </Button>
         </header>

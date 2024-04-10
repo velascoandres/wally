@@ -1,8 +1,6 @@
 import { Outlet } from 'react-router-dom'
 
-import { Images, Folder } from 'lucide-react'
-
-import { TabLink, TabRouter } from '@/components/navigation/tab-router'
+import { Folder } from 'lucide-react'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import { CommandMenu } from '@/components/navigation/command-menu'
 import { Button } from '@/components/ui/button'
@@ -21,13 +19,6 @@ const Root = () => {
             <Folder className="w-4 mr-1" /> {currentDir}
           </Button>
         </header>
-        <TabRouter>
-          <TabLink path="/">
-            <div className="flex flex-row items-center justify-center gap-1">
-              <Images className="w-4" /> <span>Gallery</span>
-            </div>
-          </TabLink>
-        </TabRouter>
         <main className="w-full flex-1">
           <Outlet />
         </main>

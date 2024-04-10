@@ -70,7 +70,28 @@
   * {
     @apply border-border;
   }
+
   body {
-    @apply backdrop-blur-md bg-background/70 text-foreground;
+    @apply bg-background text-foreground;
+    overscroll-behavior: none;
+  }
+
+  html,
+  body {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+  }
+
+  ::-webkit-scrollbar {
+    @apply bg-transparent w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-secondary rounded-2xl;
   }
 }

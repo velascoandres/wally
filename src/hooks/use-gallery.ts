@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { type GalleryWallpaper, useWallpaperManager } from '@/providers/wallpaper-manager'
 
 export const useGallery = () => {
-  const { wallpapers, changeWallpaper } = useWallpaperManager()
+  const { wallpapers } = useWallpaperManager()
   const [galleryWallpapers, setGalleryWallpapers] = useState<GalleryWallpaper[]>([])
 
   const searchWallpapers = (search: string) => {
@@ -26,6 +26,5 @@ export const useGallery = () => {
   return {
     galleryWallpapers,
     handleSearch,
-    changeWallpaper,
   }
 }

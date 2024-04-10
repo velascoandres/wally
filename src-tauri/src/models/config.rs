@@ -28,7 +28,6 @@ pub struct ExtendedWallpaperConfig {
 impl WallpaperConfig {
     pub fn get_folder_detail(&self) -> Folder {
         let path = Path::new(&self.folder_dir);
-
         let dirname = path.file_name().unwrap().to_str().unwrap();
 
         Folder {

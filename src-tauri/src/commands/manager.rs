@@ -22,20 +22,16 @@ pub fn set_wallpaper(picture_path: String, state: tauri::State<AppState>){
 #[tauri::command]
 pub fn change_folder(window: tauri::Window, dir: String, state: tauri::State<AppState>) {
     let config = Arc::clone(&state.0);
-
     let mut write_config = config.write().unwrap();
 
     write_config.set_folder_dir(&dir);
-    println!("[CONFIG] file dir changed: {}", dir);
-
-    let files = utils::get_image_files(&dir).unwrap();
-
+    
     window
         .emit(
             "files",
             EventPayload {
                 message: String::from("Loaded files"),
-                data: files,
+                data: utils::get_image_files(&dir).unwrap(),
             },
         )
         .unwrap();
@@ -44,7 +40,6 @@ pub fn change_folder(window: tauri::Window, dir: String, state: tauri::State<App
 #[tauri::command]
 pub fn get_wallpaper_config(state: tauri::State<AppState>) -> ExtendedWallpaperConfig {
     let config = Arc::clone(&state.0);
-
     let config_guard = config.read().unwrap();
 
     

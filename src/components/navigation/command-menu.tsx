@@ -37,7 +37,6 @@ export const themes = [
 export const CommandMenu = () => {
   const [isOpen, setIsOpen] = React.useState(false)
   const { setTheme } = useTheme()
-
   const { changeWallpapersFolder } = useWallpaperManager()
 
   const handleChangeTheme = (theme: Theme) => {

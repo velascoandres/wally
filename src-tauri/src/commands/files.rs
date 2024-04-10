@@ -12,8 +12,8 @@ pub struct FilePathsPayload {
 pub fn get_files(state: tauri::State<AppState>) -> FilePathsPayload {
     let config_guard = state.0.read().unwrap();
 
-    let file_dir = config_guard.get_folder_dir();
-    let files = utils::get_image_files(file_dir).unwrap_or_default();
+    let file_dir = config_guard.get_picture_config().folder_dir;
+    let files = utils::get_image_files(&file_dir).unwrap_or_default();
 
     FilePathsPayload {
         files

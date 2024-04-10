@@ -4,21 +4,21 @@
 use std::sync::{Arc, RwLock};
 
 use tauri::Manager;
-use wally::{commands, models::app_config::AppConfig, state::AppState};
+use wally::{commands, models::manager::WallpaperConfigManager, state::AppState};
 
 
-#[tokio::main]
-async fn main() {
+fn main() {
     tauri::Builder::default()
         .setup(move |app| {
-            app.manage(AppState(Arc::new(RwLock::new(AppConfig::from_file()))));
+            app.manage(AppState(Arc::new(RwLock::new(WallpaperConfigManager::from_file()))));
 
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            commands::folder::init_listen,
-            commands::folder::change_folder,
-            commands::folder::get_current_dir,
+            commands::manager::init_listen,
+            commands::manager::change_folder,
+            commands::manager::get_wallpaper_config,
+            commands::manager::set_wallpaper,
             commands::files::get_files,
         ])
         .run(tauri::generate_context!())

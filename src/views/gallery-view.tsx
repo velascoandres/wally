@@ -1,9 +1,11 @@
 import { PictureCard } from '@/components/gallery/picture-card'
+import { Button } from '@/components/ui/button'
 import { SearchBox } from '@/components/ui/search-box'
 import { useGallery } from '@/hooks/use-gallery'
+import { Wallpaper } from 'lucide-react'
 
 const GalleryView = () => {
-  const { galleryWallpapers, handleSearch } = useGallery()
+  const { galleryWallpapers, handleSearch, changeWallpaper } = useGallery()
 
   return (
     <div className="flex flex-col gap-2">
@@ -11,8 +13,16 @@ const GalleryView = () => {
         <SearchBox placeholder="Search in gallery" onSearch={handleSearch} />
       </header>
       <section className="flex flex-row flex-wrap gap-2 mx-5 py-4 justify-center">
-        {galleryWallpapers.map(({ filename, path }) => (
-          <PictureCard key={filename} name={filename} imageUrl={path} />
+        {galleryWallpapers.map(({ filename, path: systemPath, assetPath }) => (
+          <PictureCard key={filename} name={filename} imageUrl={assetPath}>
+            <Button
+              onClick={() => changeWallpaper(systemPath)}
+              variant="secondary"
+              className="bg-emerald-500 hover:bg-emerald-700"
+            >
+              <Wallpaper className="h-5 w-5 mr-2" /> Set desktop picture
+            </Button>
+          </PictureCard>
         ))}
       </section>
     </div>

@@ -1,31 +1,21 @@
-import { Fullscreen, Wallpaper, Star } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Star } from 'lucide-react'
 
 interface Props {
   name: string
   imageUrl: string
   inPlaylist?: boolean
   isDesktopPicture?: boolean
+  children?: React.ReactNode
 }
 
-export const PictureCard = ({ name, imageUrl, inPlaylist, isDesktopPicture }: Props) => {
+export const PictureCard = ({ name, imageUrl, inPlaylist, isDesktopPicture, children }: Props) => {
   return (
     <>
       <article className="relative overflow-hidden h-48 w-72 md:w-96 rounded-md border border-border group">
         <div className="absolute backdrop-blur-sm group-hover:block transition ease-out duration-300 hidden bg-neutral-800/50 h-full w-full z-20">
           <div className="flex flex-col justify-center items-center w-full h-full gap-2">
             <h3 className="text-white font-bold text-xl">{name}</h3>
-            <Button variant="secondary" className="bg-emerald-500 hover:bg-emerald-700">
-              <Wallpaper className="h-5 w-5 mr-2" /> Set desktop picture
-            </Button>
-
-            <div className="inline-flex gap-2 justify-center text-white">
-              <div className="group/tp relative basis-1/3 flex-1">
-                <Button variant="ghost" className="transition ease-in">
-                  <Fullscreen className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
+            {children}
           </div>
         </div>
         <img

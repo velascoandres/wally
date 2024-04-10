@@ -1,2 +1,2 @@
-pub mod folder;
+pub mod manager;
 pub mod files;

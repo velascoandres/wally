@@ -1,4 +1,4 @@
-use crate::{state::AppState, utils};
+use crate::{models::config::ExtendedWallpaperConfig, state::AppState, utils};
 use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
 use serde::Serialize;
 use std::{path::Path, sync::{mpsc::channel, Arc}};
@@ -10,11 +10,14 @@ struct EventPayload<T> {
 }
 
 
-#[derive(Clone, Serialize)]
-pub struct Folder {
-    pub dirname: String,
-    pub path: String
+#[tauri::command]
+pub fn set_wallpaper(picture_path: String, state: tauri::State<AppState>){
+    let config = Arc::clone(&state.0);
+    let mut config_guard = config.write().unwrap();
+
+    config_guard.set_wallpaper(picture_path);
 }
+
 
 #[tauri::command]
 pub fn change_folder(window: tauri::Window, dir: String, state: tauri::State<AppState>) {
@@ -39,21 +42,13 @@ pub fn change_folder(window: tauri::Window, dir: String, state: tauri::State<App
 }
 
 #[tauri::command]
-pub fn get_current_dir(state: tauri::State<AppState>) -> Folder {
+pub fn get_wallpaper_config(state: tauri::State<AppState>) -> ExtendedWallpaperConfig {
     let config = Arc::clone(&state.0);
 
     let config_guard = config.read().unwrap();
 
-    let current_dir = config_guard.get_folder_dir();
-
-    let path = Path::new(current_dir);
-
-    let dirname = path.file_name().unwrap().to_str().unwrap();
-
-    Folder {
-        dirname: String::from(dirname),
-        path: current_dir.clone()
-    }
+    
+    config_guard.get_expanded_config()
 }
 
 #[tauri::command]
@@ -68,9 +63,9 @@ pub fn init_listen(window: tauri::Window, state: tauri::State<AppState>) {
 
         loop {
             let config_guard = config_lock.read().unwrap();
-            let path_from_config = config_guard.get_folder_dir().clone();
+            let path_from_config = config_guard.get_picture_config().folder_dir;
 
-            let change_watcher_dir = !current_path.eq(&path_from_config.clone()) && is_watching;
+            let change_watcher_dir = !current_path.eq(&path_from_config) && is_watching;
             let is_first_watching = !is_watching;
 
             if is_first_watching {

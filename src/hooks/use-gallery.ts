@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { type Wallpaper, useWallpaper } from '@/providers/wallpaper-provider'
+import { type GalleryWallpaper, useWallpaperManager } from '@/providers/wallpaper-manager'
 
 export const useGallery = () => {
-  const { wallpapers } = useWallpaper()
-  const [galleryWallpapers, setGalleryWallpapers] = useState<Wallpaper[]>([])
+  const { wallpapers, changeWallpaper } = useWallpaperManager()
+  const [galleryWallpapers, setGalleryWallpapers] = useState<GalleryWallpaper[]>([])
 
   const searchWallpapers = (search: string) => {
     if (!search) {
@@ -26,5 +26,6 @@ export const useGallery = () => {
   return {
     galleryWallpapers,
     handleSearch,
+    changeWallpaper,
   }
 }

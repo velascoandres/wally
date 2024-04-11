@@ -1,6 +1,11 @@
-module.exports = {
+/** @type {import("eslint").Linter.Config} */
+const config = {
   env: {
     node: true,
+  },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: true,
   },
   extends: [
     'eslint:recommended',
@@ -10,6 +15,8 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'eslint-config-prettier',
     'plugin:prettier/recommended',
+    'plugin:@typescript-eslint/recommended-type-checked',
+    'plugin:@typescript-eslint/stylistic-type-checked',
   ],
   settings: {
     react: {
@@ -41,5 +48,15 @@ module.exports = {
     'space-in-parens': 2,
     'newline-before-return': 2,
     'object-curly-spacing': ['error', 'always'],
+    '@typescript-eslint/require-await': 'off',
+    '@typescript-eslint/consistent-type-definitions': 'off',
+    '@typescript-eslint/no-misused-promises': [
+      'error',
+      {
+        checksVoidReturn: { attributes: false },
+      },
+    ],
   },
 }
+
+module.exports = config

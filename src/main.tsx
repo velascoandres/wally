@@ -8,7 +8,7 @@ import { WallpaperManagerProvider } from './providers/wallpaper-manager'
 
 import './styles.css'
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <WallpaperManagerProvider>
       <RouterProvider router={router} />

@@ -14,7 +14,7 @@ const GalleryView = () => {
       <header className="sticky top-0 z-30 bg-background/40 backdrop-blur-md">
         <SearchBox placeholder="Search in gallery" onSearch={handleSearch} />
       </header>
-      <section className="flex flex-row flex-wrap gap-2 mx-5 py-4 justify-center">
+      <section className="mx-5 flex flex-row flex-wrap justify-center gap-2 py-4">
         {galleryWallpapers.map(({ filename, path: systemPath, assetPath }) => (
           <PictureCard
             key={filename}
@@ -23,11 +23,11 @@ const GalleryView = () => {
             imageUrl={assetPath}
           >
             <Button
-              onClick={() => changeWallpaper(systemPath)}
+              onClick={() => void changeWallpaper(systemPath)}
               variant="secondary"
               className="bg-emerald-500 hover:bg-emerald-700"
             >
-              <Wallpaper className="h-5 w-5 mr-2" /> Set desktop picture
+              <Wallpaper className="mr-2 h-5 w-5" /> Set desktop picture
             </Button>
           </PictureCard>
         ))}

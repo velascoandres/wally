@@ -34,8 +34,8 @@ export interface WallpaperManagerContextType {
   isLoading: boolean
   wallpapers: GalleryWallpaper[]
 
-  changeWallpaper: (path: string) => void
-  changeWallpapersFolder: () => void
+  changeWallpaper: (path: string) => Promise<void>
+  changeWallpapersFolder: () => Promise<void>
 }
 
 interface Props {
@@ -89,7 +89,7 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
   }, [])
 
   useEffect(() => {
-    appWindow.listen(EVENTS.FILES, (event: Event<FilesEventPayload>) => {
+    void appWindow.listen(EVENTS.FILES, (event: Event<FilesEventPayload>) => {
       const { payload } = event
 
       setWallpapers(payload.data.map(filePathAssetDto))
@@ -111,4 +111,4 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
   )
 }
 
-export const useWallpaperManager = () => useContext(WallpaperManagerContext) as WallpaperManagerContextType
+export const useWallpaperManager = () => useContext(WallpaperManagerContext)!

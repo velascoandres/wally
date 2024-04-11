@@ -14,7 +14,7 @@ interface Props {
 export const TabRouter = ({ children }: Props) => {
   const tabs = Children.toArray(children)
 
-  return <nav className="flex flex-row gap-2 w-full px-2 py-1 bg-secondary rounded-md">{tabs.map((tab) => tab)}</nav>
+  return <nav className="flex w-full flex-row gap-2 rounded-md bg-secondary px-2 py-1">{tabs.map((tab) => tab)}</nav>
 }
 
 export const TabLink = ({ path, children }: TabProps) => {
@@ -22,7 +22,7 @@ export const TabLink = ({ path, children }: TabProps) => {
     <NavLink
       to={path}
       className={({ isActive }) =>
-        cn('transition ease-in px-4 py-1 rounded-md bg-secondary text-primary text-sm  hover:bg-neutral-700', {
+        cn('rounded-md bg-secondary px-4 py-1 text-sm text-primary transition ease-in  hover:bg-neutral-700', {
           'bg-background hover:bg-background': isActive,
         })
       }

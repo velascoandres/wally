@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { GitHubLogoIcon } from '@radix-ui/react-icons'
-import { Folder, CoffeeIcon, SunIcon, MoonIcon, MonitorIcon } from 'lucide-react'
+import { Folder, CoffeeIcon } from 'lucide-react'
 import { open } from '@tauri-apps/api/shell'
 
 import {
@@ -15,24 +15,7 @@ import {
 import { Theme, useTheme } from '../theme/theme-provider'
 import { useWallpaperManager } from '@/providers/wallpaper-manager'
 import { LINKS } from '@/constants/links'
-
-export const themes = [
-  {
-    name: 'Light Theme',
-    param: 'light',
-    icon: SunIcon,
-  },
-  {
-    name: 'Dark Theme',
-    param: 'dark',
-    icon: MoonIcon,
-  },
-  {
-    name: 'System Theme',
-    param: 'system',
-    icon: MonitorIcon,
-  },
-]
+import { THEMES } from '@/constants/themes'
 
 export const CommandMenu = () => {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -61,7 +44,7 @@ export const CommandMenu = () => {
     <>
       <p className="text-sm text-muted-foreground">
         <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-          <span className="text-xs">⌘</span>K
+          <span className="text-sm">⌘</span>K
         </kbd>
       </p>
       <CommandDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -76,7 +59,7 @@ export const CommandMenu = () => {
             <CommandSeparator />
           </CommandGroup>
           <CommandGroup heading="Themes">
-            {themes.map((theme) => (
+            {THEMES.map((theme) => (
               <CommandItem
                 key={theme.param}
                 value={`Change Theme: ${theme.name}`}
@@ -89,11 +72,11 @@ export const CommandMenu = () => {
           </CommandGroup>
           <CommandSeparator />
           <CommandGroup heading="Links">
-            <CommandItem key={3} onSelect={() => open(LINKS.GITHIB_REPOSITORY)}>
+            <CommandItem key={3} onSelect={() => void open(LINKS.GITHIB_REPOSITORY)}>
               <GitHubLogoIcon className="mr-2 h-4 w-4" />
               <span>Github repository</span>
             </CommandItem>
-            <CommandItem key={4} onSelect={() => open(LINKS.GITHIB_REPOSITORY)}>
+            <CommandItem key={4} onSelect={() => void open(LINKS.GITHIB_REPOSITORY)}>
               <CoffeeIcon className="mr-2 h-4 w-4" />
               <span>Buy me a coffee</span>
             </CommandItem>

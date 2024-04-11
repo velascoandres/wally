@@ -84,7 +84,7 @@
   }
 
   ::-webkit-scrollbar {
-    @apply bg-transparent w-2;
+    @apply w-2 bg-transparent;
   }
 
   ::-webkit-scrollbar-track {
@@ -92,6 +92,6 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-secondary rounded-2xl;
+    @apply rounded-2xl bg-secondary;
   }
 }

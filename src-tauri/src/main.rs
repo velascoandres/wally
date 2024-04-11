@@ -10,7 +10,14 @@ use wally::{commands, models::manager::WallpaperConfigManager, state::AppState};
 fn main() {
     tauri::Builder::default()
         .setup(move |app| {
-            app.manage(AppState(Arc::new(RwLock::new(WallpaperConfigManager::from_file()))));
+            let app_data_dir = app.path_resolver().app_data_dir().unwrap();
+            let app_data_dir_path = app_data_dir.as_path().to_str().unwrap();
+
+            std::fs::create_dir_all(app_data_dir_path).unwrap();
+
+            let config_path = format!("{app_data_dir_path}/wally.toml");
+
+            app.manage(AppState(Arc::new(RwLock::new(WallpaperConfigManager::from_file_path(config_path.as_str())))));
 
             Ok(())
         })

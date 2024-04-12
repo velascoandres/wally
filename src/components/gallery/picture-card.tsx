@@ -22,7 +22,7 @@ export const PictureCard = ({ name, imageUrl, isDesktopPicture, children }: Prop
           alt={name}
           className="aspect-video h-48 w-72 object-cover transition ease-in group-hover:scale-105 md:w-96"
         />
-        {isDesktopPicture && <Star className="absolute left-1 top-0 z-30 h-8 w-8 text-black" fill="yellow" />}
+        {isDesktopPicture && <Star className="absolute left-1 top-0 z-20 h-8 w-8 text-black" fill="yellow" />}
       </article>
     </>
   )

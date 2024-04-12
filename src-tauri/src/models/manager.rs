@@ -7,9 +7,14 @@ use std::{
 use toml;
 use wallpaper;
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct RootConfig {
+    config_path: String
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct WallpaperConfigManager {
-    config_path: String,
+    root: RootConfig,
     wallpaper_config: WallpaperConfig,
 }
 
@@ -18,7 +23,7 @@ impl Default for WallpaperConfig {
         Self {
             playlist_enable: Default::default(),
             playlist_time: Default::default(),
-            current_picture: wallpaper::get().unwrap(),
+            current_picture: wallpaper::get().unwrap_or_default(),
             folder_dir: String::from(dirs::document_dir().unwrap().to_str().unwrap()),
         }
     }
@@ -27,7 +32,7 @@ impl Default for WallpaperConfig {
 impl WallpaperConfigManager {
     fn persist_config(&self) {
         let toml_str = toml::to_string_pretty(self).expect("Failed to serialize to TOML");
-        let mut file = File::create(&self.config_path).expect("Failed to create file");
+        let mut file = File::create(&self.root.config_path).expect("Failed to create file");
 
         file.write_all(toml_str.as_bytes())
             .expect("Failed to write to file");
@@ -70,7 +75,9 @@ impl WallpaperConfigManager {
 
     pub fn from_file_path(config_path: &str) -> Self {
         let default_config = WallpaperConfigManager {
-            config_path: String::from(config_path),
+            root: RootConfig {
+                config_path: String::from(config_path)
+            } ,
             wallpaper_config: WallpaperConfig::default(),
         };
 
@@ -86,8 +93,8 @@ impl WallpaperConfigManager {
                 println!("[CONFIG] Config loaded");
                 loaded_config
             }
-            Err(_) => {
-                println!("[CONFIG] Error on deserializing config. Using default config");
+            Err(err) => {
+                println!("[CONFIG] Error on deserializing config. Using default config: {err}");
                 default_config
             }
         }

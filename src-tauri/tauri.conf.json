@@ -10,6 +10,7 @@
     "version": "0.0.0"
   },
   "tauri": {
+    "macOSPrivateApi": true,
     "allowlist": {
       "fs": {
         "all": true,
@@ -45,7 +46,8 @@
         "title": "wally",
         "width": 350,
         "height": 600,
-        "resizable": false
+        "resizable": false,
+        "transparent": true
       }
     ],
     "security": {

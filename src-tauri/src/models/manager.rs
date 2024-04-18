@@ -7,9 +7,11 @@ use std::{
 use toml;
 use wallpaper;
 
+const DEFAULT_PLAYLIST_TIME: u64 = 60;
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RootConfig {
-    config_path: String
+    config_path: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -22,7 +24,7 @@ impl Default for WallpaperConfig {
     fn default() -> Self {
         Self {
             playlist_enable: Default::default(),
-            playlist_time: Default::default(),
+            playlist_time: DEFAULT_PLAYLIST_TIME,
             current_picture: wallpaper::get().unwrap_or_default(),
             folder_dir: String::from(dirs::document_dir().unwrap().to_str().unwrap()),
         }
@@ -76,14 +78,14 @@ impl WallpaperConfigManager {
     pub fn from_file_path(config_path: &str) -> Self {
         let default_config = WallpaperConfigManager {
             root: RootConfig {
-                config_path: String::from(config_path)
-            } ,
+                config_path: String::from(config_path),
+            },
             wallpaper_config: WallpaperConfig::default(),
         };
 
         let config_file_result = fs::read_to_string(config_path);
 
-        if config_file_result.is_err(){
+        if config_file_result.is_err() {
             println!("[CONFIG] Error reading config file. Using default config");
             return default_config;
         }

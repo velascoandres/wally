@@ -6,7 +6,6 @@ use std::sync::{Arc, RwLock};
 use tauri::Manager;
 use wally::{commands, models::manager::WallpaperConfigManager, state::AppState};
 
-
 fn main() {
     tauri::Builder::default()
         .setup(move |app| {
@@ -17,7 +16,9 @@ fn main() {
 
             let config_path = format!("{app_data_dir_path}/wally.toml");
 
-            app.manage(AppState(Arc::new(RwLock::new(WallpaperConfigManager::from_file_path(config_path.as_str())))));
+            app.manage(AppState(Arc::new(RwLock::new(
+                WallpaperConfigManager::from_file_path(config_path.as_str()),
+            ))));
 
             Ok(())
         })
@@ -26,6 +27,8 @@ fn main() {
             commands::manager::change_folder,
             commands::manager::get_wallpaper_config,
             commands::manager::set_wallpaper,
+            commands::manager::listen_playlist,
+            commands::manager::toggle_playlist,
             commands::files::get_files,
         ])
         .run(tauri::generate_context!())

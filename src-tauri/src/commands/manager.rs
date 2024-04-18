@@ -1,7 +1,10 @@
 use crate::{models::config::ExtendedWallpaperConfig, state::AppState, utils};
 use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
 use serde::Serialize;
-use std::{path::Path, sync::{mpsc::channel, Arc}};
+use std::{
+    path::Path,
+    sync::{mpsc::channel, Arc},
+};
 
 #[derive(Clone, Serialize)]
 struct EventPayload<T> {
@@ -9,15 +12,13 @@ struct EventPayload<T> {
     data: T,
 }
 
-
 #[tauri::command]
-pub fn set_wallpaper(picture_path: String, state: tauri::State<AppState>){
+pub fn set_wallpaper(picture_path: String, state: tauri::State<AppState>) {
     let config = Arc::clone(&state.0);
     let mut config_guard = config.write().unwrap();
 
     config_guard.set_wallpaper(picture_path);
 }
-
 
 #[tauri::command]
 pub fn change_folder(window: tauri::Window, dir: String, state: tauri::State<AppState>) {
@@ -25,7 +26,7 @@ pub fn change_folder(window: tauri::Window, dir: String, state: tauri::State<App
     let mut write_config = config.write().unwrap();
 
     write_config.set_folder_dir(&dir);
-    
+
     window
         .emit(
             "files",
@@ -42,7 +43,6 @@ pub fn get_wallpaper_config(state: tauri::State<AppState>) -> ExtendedWallpaperC
     let config = Arc::clone(&state.0);
     let config_guard = config.read().unwrap();
 
-    
     config_guard.get_expanded_config()
 }
 
@@ -80,7 +80,7 @@ pub fn init_listen(window: tauri::Window, state: tauri::State<AppState>) {
             if let Ok(event) = receiver.recv_timeout(std::time::Duration::from_secs(1)) {
                 println!("Event: {:?}", event.unwrap());
                 let files = utils::get_image_files(&current_path).unwrap();
-                
+
                 window
                     .emit(
                         "files",
@@ -93,4 +93,65 @@ pub fn init_listen(window: tauri::Window, state: tauri::State<AppState>) {
             }
         }
     });
+}
+
+#[tauri::command]
+pub fn listen_playlist(window: tauri::Window, state: tauri::State<AppState>) {
+    let config_lock = Arc::clone(&state.0);
+
+    std::thread::spawn(move || loop {
+        // get config -> folder, current_picture
+        let mut config_guard = config_lock.write().unwrap();
+
+        if !config_guard.get_picture_config().playlist_enable {
+            continue;
+        }
+
+        // if playlist enable continue
+        let time = config_guard.get_picture_config().playlist_time;
+        let current_picture = config_guard.get_picture_config().current_picture;
+        let current_dir = config_guard.get_picture_config().folder_dir;
+
+        let files = utils::get_image_files(&current_dir).unwrap_or_default();
+        let folder_size = files.len();
+
+        let current_index = files
+            .iter()
+            .position(|wallpaper| wallpaper.path == current_picture)
+            .unwrap();
+
+        let mut next_index = current_index + 1;
+
+        if next_index + 1 == folder_size {
+            next_index = 0;
+        }
+
+        let current_wallpaper = files[next_index].clone();
+
+        config_guard.set_wallpaper(current_wallpaper.path.clone());
+
+        std::mem::drop(config_guard);
+
+        window
+            .emit(
+                "wallpaper",
+                EventPayload {
+                    message: String::from("wallpaper updated"),
+                    data: current_wallpaper,
+                },
+            )
+            .unwrap();
+
+        std::thread::sleep(std::time::Duration::from_secs(time));
+    });
+}
+
+#[tauri::command]
+pub fn toggle_playlist(state: tauri::State<AppState>) {
+    let config_lock = Arc::clone(&state.0);
+
+    let mut config_guard = config_lock.write().unwrap();
+    let is_playlist_enable = config_guard.get_picture_config().playlist_enable;
+
+    config_guard.set_playlist_enable(!is_playlist_enable);
 }

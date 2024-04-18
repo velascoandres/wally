@@ -36,6 +36,7 @@ export interface WallpaperManagerContextType {
 
   changeWallpaper: (path: string) => Promise<void>
   changeWallpapersFolder: () => Promise<void>
+  togglePlaylist: () => Promise<void>
 }
 
 interface Props {
@@ -49,6 +50,11 @@ interface FilesResponse {
 interface FilesEventPayload {
   message: string
   data: GalleryWallpaper[]
+}
+
+interface WallpaperEventPayload {
+  message: string
+  data: BaseWallpaper
 }
 
 export const WallpaperManagerContext = createContext<WallpaperManagerContextType | null>(null)
@@ -77,10 +83,13 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
     await invoke<WallpaperConfig>(COMMANDS.GET_WALLPAPER_CONFIG).then(setConfig)
   }
 
+  const togglePlaylist = () => invoke<void>(COMMANDS.TOGGLE_PLAYLIST)
+
   useEffect(() => {
     setIsLoading(true)
 
     void invoke(COMMANDS.START_LISTENING_FOLDER)
+    void invoke(COMMANDS.START_LISTENING_PLAYLIST)
     void invoke<WallpaperConfig>(COMMANDS.GET_WALLPAPER_CONFIG).then(setConfig)
     void invoke<FilesResponse>(COMMANDS.GET_FILES)
       .then(({ files }: FilesResponse) => files.map(filePathAssetDto))
@@ -96,6 +105,23 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
     })
   }, [])
 
+  useEffect(() => {
+    void appWindow.listen(EVENTS.WALLPAPER, (event: Event<WallpaperEventPayload>) => {
+      const { payload } = event
+
+      setConfig((currentConfig) => {
+        if (!currentConfig) {
+          return
+        }
+
+        return {
+          ...currentConfig,
+          current_picture: payload.data.path,
+        }
+      })
+    })
+  }, [])
+
   return (
     <WallpaperManagerContext.Provider
       value={{
@@ -104,6 +130,7 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
         config,
         changeWallpapersFolder,
         changeWallpaper,
+        togglePlaylist,
       }}
     >
       {children}

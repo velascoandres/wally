@@ -4,11 +4,13 @@ import { Folder } from 'lucide-react'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import { CommandMenu } from '@/components/navigation/command-menu'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import { useWallpaperManager } from '@/providers/wallpaper-manager'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 const Root = () => {
-  const { config, changeWallpapersFolder } = useWallpaperManager()
+  const { config, changeWallpapersFolder, togglePlaylist } = useWallpaperManager()
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -28,8 +30,12 @@ const Root = () => {
               </Tooltip>
             </TooltipProvider>
           )}
+          <div className="flex items-center space-x-2">
+            <Switch id="playlist_enable" checked={config?.playlist_enable} onCheckedChange={togglePlaylist} />
+            <Label htmlFor="airplane-mode">playlist</Label>
+          </div>
         </header>
-        <main className="w-full flex-1">
+        <main className="mx-auto w-full flex-1">
           <Outlet />
         </main>
       </div>

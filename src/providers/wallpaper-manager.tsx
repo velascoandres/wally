@@ -7,6 +7,7 @@ import { open } from '@tauri-apps/api/dialog'
 import { documentDir } from '@tauri-apps/api/path'
 import { COMMANDS } from '@/constants/commands'
 import { EVENTS } from '@/constants/events'
+import { useToast } from '@/hooks/use-toast'
 
 interface BaseWallpaper {
   filename: string
@@ -34,6 +35,7 @@ export interface WallpaperManagerContextType {
   isLoading: boolean
   wallpapers: GalleryWallpaper[]
 
+  changePlaylistTime: (time: number) => Promise<void>
   changeWallpaper: (path: string) => Promise<void>
   changeWallpapersFolder: () => Promise<void>
   togglePlaylist: () => Promise<void>
@@ -63,6 +65,7 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
   const [wallpapers, setWallpapers] = useState<GalleryWallpaper[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [config, setConfig] = useState<WallpaperConfig>()
+  const { toast } = useToast()
 
   const filePathAssetDto = (baseWallpaper: BaseWallpaper): GalleryWallpaper => ({
     ...baseWallpaper,
@@ -76,14 +79,26 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
 
     await invoke(COMMANDS.CHANGE_FOLDER, { dir: selectedDir })
     await invoke<WallpaperConfig>(COMMANDS.GET_WALLPAPER_CONFIG).then(setConfig)
+
+    toast({
+      title: 'Source folder changed',
+      description: selectedDir,
+    })
   }
 
   const changeWallpaper = async (picturePath: string) => {
     await invoke(COMMANDS.SET_WALLPAPER, { picturePath })
     await invoke<WallpaperConfig>(COMMANDS.GET_WALLPAPER_CONFIG).then(setConfig)
+
+    toast({
+      title: 'Wallpaper changed',
+      description: picturePath,
+    })
   }
 
   const togglePlaylist = () => invoke<void>(COMMANDS.TOGGLE_PLAYLIST)
+
+  const changePlaylistTime = (time: number) => invoke<void>(COMMANDS.CHANGE_PLAYLIST_TIME, { time })
 
   useEffect(() => {
     setIsLoading(true)
@@ -128,6 +143,7 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
         isLoading,
         wallpapers,
         config,
+        changePlaylistTime,
         changeWallpapersFolder,
         changeWallpaper,
         togglePlaylist,

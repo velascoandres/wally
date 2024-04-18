@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { GitHubLogoIcon } from '@radix-ui/react-icons'
-import { Folder, CoffeeIcon } from 'lucide-react'
+import { Folder, CoffeeIcon, Settings } from 'lucide-react'
 import { open } from '@tauri-apps/api/shell'
 
 import {
@@ -16,15 +16,24 @@ import { Theme, useTheme } from '../theme/theme-provider'
 import { useWallpaperManager } from '@/providers/wallpaper-manager'
 import { LINKS } from '@/constants/links'
 import { THEMES } from '@/constants/themes'
+import { useModalStore } from '@/store/modal'
+import { PlaylistSettings } from '../wallpaper/playlist-settings'
 
 export const CommandMenu = () => {
   const [isOpen, setIsOpen] = React.useState(false)
   const { setTheme } = useTheme()
   const { changeWallpapersFolder } = useWallpaperManager()
+  const { openModal } = useModalStore()
 
   const handleChangeTheme = (theme: Theme) => {
     setTheme(theme)
     setIsOpen(false)
+  }
+
+  const openPlaylistSettings = () => {
+    openModal({
+      component: PlaylistSettings,
+    })
   }
 
   React.useEffect(() => {
@@ -55,6 +64,10 @@ export const CommandMenu = () => {
             <CommandItem key={1} onSelect={changeWallpapersFolder}>
               <Folder className="mr-2 h-4 w-4" />
               <span>Change folder</span>
+            </CommandItem>
+            <CommandItem key={23} onSelect={openPlaylistSettings}>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Playlist settings</span>
             </CommandItem>
             <CommandSeparator />
           </CommandGroup>

@@ -1,6 +1,6 @@
-import { PictureCard } from '@/components/gallery/picture-card'
 import { Button } from '@/components/ui/button'
 import { SearchBox } from '@/components/ui/search-box'
+import { PictureCard } from '@/components/wallpaper/picture-card'
 import { useGallery } from '@/hooks/use-gallery'
 import { useWallpaperManager } from '@/providers/wallpaper-manager'
 import { Wallpaper } from 'lucide-react'

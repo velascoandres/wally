@@ -13,7 +13,6 @@ impl From<std::io::Error> for FileError {
     }
 }
 
-
 pub fn get_image_files(path: &str) -> Result<Vec<Wallpaper>, FileError> {
     let entries = fs::read_dir(path)?;
 
@@ -24,14 +23,18 @@ pub fn get_image_files(path: &str) -> Result<Vec<Wallpaper>, FileError> {
         let file_path = file_entry.path();
 
         if file_path.is_file() && is_image_file(&file_path) {
-            if let (Some(path_str), Some(filename)) = (file_entry.path().to_str(), file_entry.file_name().to_str()) {
+            if let (Some(path_str), Some(filename)) =
+                (file_entry.path().to_str(), file_entry.file_name().to_str())
+            {
                 files.push(Wallpaper {
                     filename: String::from(filename),
-                    path: String::from(path_str)
+                    path: String::from(path_str),
                 });
             }
         }
     }
+
+    files.sort_by(|a, b| a.filename.cmp(&b.filename));
 
     Ok(files)
 }

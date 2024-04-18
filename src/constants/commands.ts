@@ -6,4 +6,5 @@ export const COMMANDS = {
   CHANGE_FOLDER: 'change_folder',
   SET_WALLPAPER: 'set_wallpaper',
   TOGGLE_PLAYLIST: 'toggle_playlist',
+  CHANGE_PLAYLIST_TIME: 'change_playlist_time',
 } as const

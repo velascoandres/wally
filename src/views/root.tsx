@@ -20,10 +20,10 @@ const Root = () => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button onClick={changeWallpapersFolder} variant="outline" className="sticky bottom-2">
-                    <Folder className="mr-1 w-4" /> {config.contained_folder.dirname}
+                    <Folder className="mr-1 w-4" /> {config.containedFolder.dirname}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="z-50">{config.contained_folder.path}</TooltipContent>
+                <TooltipContent className="z-50">{config.containedFolder.path}</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           )}

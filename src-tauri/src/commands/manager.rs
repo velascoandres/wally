@@ -97,11 +97,11 @@ pub fn init_listen(window: tauri::Window, state: tauri::State<AppState>) {
 
 #[tauri::command]
 pub fn listen_playlist(window: tauri::Window, state: tauri::State<AppState>) {
-    let config_lock = Arc::clone(&state.0);
+    let config_lock: Arc<std::sync::RwLock<crate::models::manager::WallpaperConfigManager>> = Arc::clone(&state.0);
 
     std::thread::spawn(move || loop {
         // get config -> folder, current_picture
-        let mut config_guard = config_lock.write().unwrap();
+        let mut config_guard: std::sync::RwLockWriteGuard<'_, crate::models::manager::WallpaperConfigManager> = config_lock.write().unwrap();
 
         if !config_guard.get_picture_config().playlist_enable {
             continue;
@@ -122,14 +122,16 @@ pub fn listen_playlist(window: tauri::Window, state: tauri::State<AppState>) {
 
         let mut next_index = current_index + 1;
 
-        if next_index + 1 == folder_size {
+        if next_index >= folder_size - 1 {
             next_index = 0;
         }
 
-        let current_wallpaper = files[next_index].clone();
+        let current_wallpaper = match files.get(next_index)  {
+            Some(wallpaper) => wallpaper,
+            None => files.first().unwrap(),
+        };
 
         config_guard.set_wallpaper(current_wallpaper.path.clone());
-
         std::mem::drop(config_guard);
 
         window
@@ -147,11 +149,11 @@ pub fn listen_playlist(window: tauri::Window, state: tauri::State<AppState>) {
 }
 
 #[tauri::command]
-pub fn toggle_playlist(state: tauri::State<AppState>) {
+pub fn change_playlist_settings(playlist_time: u64, playlist_enable: bool, state: tauri::State<AppState>) {
     let config_lock = Arc::clone(&state.0);
 
     let mut config_guard = config_lock.write().unwrap();
-    let is_playlist_enable = config_guard.get_picture_config().playlist_enable;
 
-    config_guard.set_playlist_enable(!is_playlist_enable);
+    config_guard.set_playlist_enable(playlist_enable);
+    config_guard.set_playlist_time(playlist_time);
 }

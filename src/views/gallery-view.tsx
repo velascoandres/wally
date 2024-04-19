@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { SearchBox } from '@/components/ui/search-box'
 import { PictureCard } from '@/components/wallpaper/picture-card'
+import { PlaylistFlag } from '@/components/wallpaper/playlist-flag'
 import { useGallery } from '@/hooks/use-gallery'
 import { useWallpaperManager } from '@/providers/wallpaper-manager'
 import { Wallpaper } from 'lucide-react'
@@ -18,7 +19,7 @@ const GalleryView = () => {
         {galleryWallpapers.map(({ filename, path: systemPath, assetPath }) => (
           <PictureCard
             key={filename}
-            isDesktopPicture={config?.current_picture === systemPath}
+            isDesktopPicture={config?.currentPicture === systemPath}
             name={filename}
             imageUrl={assetPath}
           >
@@ -32,6 +33,7 @@ const GalleryView = () => {
           </PictureCard>
         ))}
       </section>
+      <PlaylistFlag playlistEnable={!!config?.playlistEnable} />
     </div>
   )
 }

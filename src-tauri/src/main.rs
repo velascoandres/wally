@@ -24,11 +24,11 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             commands::manager::init_listen,
+            commands::manager::listen_playlist,
             commands::manager::change_folder,
             commands::manager::get_wallpaper_config,
             commands::manager::set_wallpaper,
-            commands::manager::listen_playlist,
-            commands::manager::toggle_playlist,
+            commands::manager::change_playlist_settings,
             commands::files::get_files,
         ])
         .run(tauri::generate_context!())

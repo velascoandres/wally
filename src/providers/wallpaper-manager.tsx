@@ -23,22 +23,30 @@ export interface Folder {
   path: string
 }
 
-export interface WallpaperConfig {
+interface WallpaperConfigRaw {
   current_picture?: string
   contained_folder: Folder
   playlist_enable: boolean
   playlist_time: number
 }
 
+export interface WallpaperConfig {
+  currentPicture?: string
+  containedFolder: Folder
+  playlistEnable: boolean
+  playlistTime: number
+}
+
+export type PlaylistSettingsOptions = Pick<WallpaperConfig, 'playlistTime' | 'playlistEnable'>
+
 export interface WallpaperManagerContextType {
   config?: WallpaperConfig
   isLoading: boolean
   wallpapers: GalleryWallpaper[]
 
-  changePlaylistTime: (time: number) => Promise<void>
   changeWallpaper: (path: string) => Promise<void>
   changeWallpapersFolder: () => Promise<void>
-  togglePlaylist: () => Promise<void>
+  changePlaylistSettings: (settings: PlaylistSettingsOptions) => Promise<void>
 }
 
 interface Props {
@@ -61,6 +69,13 @@ interface WallpaperEventPayload {
 
 export const WallpaperManagerContext = createContext<WallpaperManagerContextType | null>(null)
 
+const wallpaperDto = (rawConfig: WallpaperConfigRaw): WallpaperConfig => ({
+  containedFolder: rawConfig.contained_folder,
+  playlistEnable: rawConfig.playlist_enable,
+  playlistTime: rawConfig.playlist_time,
+  currentPicture: rawConfig.current_picture,
+})
+
 export const WallpaperManagerProvider = ({ children }: Props) => {
   const [wallpapers, setWallpapers] = useState<GalleryWallpaper[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -73,39 +88,71 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
   })
 
   const changeWallpapersFolder = async () => {
-    const documentsPath = await documentDir()
+    try {
+      const documentsPath = await documentDir()
 
-    const selectedDir = await open({ defaultPath: documentsPath, directory: true })
+      const selectedDir = await open({ defaultPath: documentsPath, directory: true })
 
-    await invoke(COMMANDS.CHANGE_FOLDER, { dir: selectedDir })
-    await invoke<WallpaperConfig>(COMMANDS.GET_WALLPAPER_CONFIG).then(setConfig)
+      await invoke(COMMANDS.CHANGE_FOLDER, { dir: selectedDir })
+      const updatedConfig = await invoke<WallpaperConfigRaw>(COMMANDS.GET_WALLPAPER_CONFIG)
 
-    toast({
-      title: 'Source folder changed',
-      description: selectedDir,
-    })
+      setConfig(wallpaperDto(updatedConfig))
+
+      toast({
+        title: '🚀 Source folder changed',
+        description: selectedDir,
+      })
+    } catch (err) {
+      console.error(err)
+
+      toast({
+        title: '🚨 Error on changing folder',
+      })
+    }
+  }
+
+  const reloadConfig = async () => {
+    const config = await invoke<WallpaperConfigRaw>(COMMANDS.GET_WALLPAPER_CONFIG)
+    setConfig(wallpaperDto(config))
   }
 
   const changeWallpaper = async (picturePath: string) => {
     await invoke(COMMANDS.SET_WALLPAPER, { picturePath })
-    await invoke<WallpaperConfig>(COMMANDS.GET_WALLPAPER_CONFIG).then(setConfig)
+
+    await reloadConfig()
 
     toast({
-      title: 'Wallpaper changed',
+      title: '🚀 Wallpaper changed',
       description: picturePath,
     })
   }
 
-  const togglePlaylist = () => invoke<void>(COMMANDS.TOGGLE_PLAYLIST)
+  const changePlaylistSettings = async (settings: PlaylistSettingsOptions) => {
+    try {
+      await invoke<void>(COMMANDS.CHANGE_PLAYLIST_SETTINGS, settings)
 
-  const changePlaylistTime = (time: number) => invoke<void>(COMMANDS.CHANGE_PLAYLIST_TIME, { time })
+      await reloadConfig()
+
+      toast({
+        title: '🚀 Updated playlist settings',
+      })
+    } catch (error) {
+      toast({
+        title: '🚨 Error on updating playlist settings',
+      })
+    }
+  }
 
   useEffect(() => {
     setIsLoading(true)
-
-    void invoke(COMMANDS.START_LISTENING_FOLDER)
-    void invoke(COMMANDS.START_LISTENING_PLAYLIST)
-    void invoke<WallpaperConfig>(COMMANDS.GET_WALLPAPER_CONFIG).then(setConfig)
+    void invoke<WallpaperConfigRaw>(COMMANDS.GET_WALLPAPER_CONFIG).then((rawConfig) => {
+      setConfig({
+        containedFolder: rawConfig.contained_folder,
+        playlistEnable: rawConfig.playlist_enable,
+        playlistTime: rawConfig.playlist_time,
+        currentPicture: rawConfig.current_picture,
+      })
+    })
     void invoke<FilesResponse>(COMMANDS.GET_FILES)
       .then(({ files }: FilesResponse) => files.map(filePathAssetDto))
       .then(setWallpapers)
@@ -131,7 +178,7 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
 
         return {
           ...currentConfig,
-          current_picture: payload.data.path,
+          currentPicture: payload.data.path,
         }
       })
     })
@@ -143,10 +190,9 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
         isLoading,
         wallpapers,
         config,
-        changePlaylistTime,
         changeWallpapersFolder,
         changeWallpaper,
-        togglePlaylist,
+        changePlaylistSettings,
       }}
     >
       {children}

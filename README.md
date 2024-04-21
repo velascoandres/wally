@@ -22,3 +22,6 @@ bun tauri dev
 ## Features
 - [x] Manage wallpapers from a selected folder
 - [x] Enable a playlist mode with a time per picture
+
+## Downloads
+Click [here](!https://github.com/velascoandres/wally/releases/tag/v0.0.1) to go to downloads page

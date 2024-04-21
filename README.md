@@ -24,4 +24,4 @@ bun tauri dev
 - [x] Enable a playlist mode with a time per picture
 
 ## Downloads
-Click [here](!https://github.com/velascoandres/wally/releases/tag/v0.0.1) to go to downloads page
+Click [here](https://github.com/velascoandres/wally/releases/tag/v0.0.1) to go to downloads page

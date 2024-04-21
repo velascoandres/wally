@@ -1,22 +1,24 @@
-# Tauri + React + Typescript
+# Wally
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+The simple and minimalist wallpaper manager
 
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
-
+![Cover](https://github.com/velascoandres/wally/assets/cover.svg)
 
 
-### Commands
-Create database
+### Installation
+Install dependencies
 
 ```shell_script
-sqlx database create
+bun install
 ```
 
-Run migrations
+Run dev mode
 
 ```shell_script
-sqlx migrate run
+bun tauri dev
 ```
+
+## Features
+- [x] Manage wallpapers from a selected folder
+- [x] Enable a playlist mode with a time per picture

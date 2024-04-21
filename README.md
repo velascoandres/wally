@@ -3,7 +3,7 @@
 
 The simple and minimalist wallpaper manager
 
-![Cover](https://github.com/velascoandres/wally/assets/cover.svg)
+![Cover](/assets/cover.svg)
 
 
 ### Installation

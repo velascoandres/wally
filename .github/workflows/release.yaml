@@ -40,10 +40,10 @@ jobs:
       - uses: oven-sh/setup-bun@v1
 
       - name: Install frontend dependencies
-        run: bun run install
+        run: bun install
       
       - name: Check lint
-        run: bun run lint
+        run: bun lint
 
       - name: Build the app
         uses: tauri-apps/tauri-action@v0

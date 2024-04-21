@@ -75,7 +75,7 @@ pub fn init_listen(window: tauri::Window, state: tauri::State<AppState>) {
                 .watch(Path::new(&current_path), RecursiveMode::NonRecursive)
                 .unwrap();
 
-            std::mem::drop(config_guard);
+            drop(config_guard);
 
             if let Ok(event) = receiver.recv_timeout(std::time::Duration::from_secs(1)) {
                 println!("Event: {:?}", event.unwrap());
@@ -132,7 +132,7 @@ pub fn listen_playlist(window: tauri::Window, state: tauri::State<AppState>) {
         };
 
         config_guard.set_wallpaper(current_wallpaper.path.clone());
-        std::mem::drop(config_guard);
+        drop(config_guard);
 
         window
             .emit(

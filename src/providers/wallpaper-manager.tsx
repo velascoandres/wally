@@ -67,6 +67,8 @@ interface WallpaperEventPayload {
   data: BaseWallpaper
 }
 
+const NOTIFICATION_TIME = 2000
+
 export const WallpaperManagerContext = createContext<WallpaperManagerContextType | null>(null)
 
 const wallpaperDto = (rawConfig: WallpaperConfigRaw): WallpaperConfig => ({
@@ -101,12 +103,14 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
       toast({
         title: '🚀 Source folder changed',
         description: selectedDir,
+        duration: NOTIFICATION_TIME,
       })
     } catch (err) {
       console.error(err)
 
       toast({
         title: '🚨 Error on changing folder',
+        duration: NOTIFICATION_TIME,
       })
     }
   }
@@ -124,6 +128,7 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
     toast({
       title: '🚀 Wallpaper changed',
       description: picturePath,
+      duration: NOTIFICATION_TIME,
     })
   }
 
@@ -135,10 +140,12 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
 
       toast({
         title: '🚀 Updated playlist settings',
+        duration: NOTIFICATION_TIME,
       })
     } catch (error) {
       toast({
         title: '🚨 Error on updating playlist settings',
+        duration: NOTIFICATION_TIME,
       })
     }
   }

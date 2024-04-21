@@ -92,6 +92,6 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply rounded-2xl bg-secondary;
+    @apply rounded-2xl bg-primary/70;
   }
 }

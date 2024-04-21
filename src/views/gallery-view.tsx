@@ -23,13 +23,11 @@ const GalleryView = () => {
             name={filename}
             imageUrl={assetPath}
           >
-            <Button
-              onClick={() => void changeWallpaper(systemPath)}
-              variant="secondary"
-              className="bg-emerald-500 hover:bg-emerald-700"
-            >
-              <Wallpaper className="mr-2 h-5 w-5" /> Set desktop picture
-            </Button>
+            {config?.currentPicture !== systemPath && (
+              <Button onClick={() => void changeWallpaper(systemPath)} variant="outline">
+                <Wallpaper className="mr-2 h-5 w-5" /> Set desktop picture
+              </Button>
+            )}
           </PictureCard>
         ))}
       </section>

@@ -10,7 +10,7 @@ import './styles.css'
 import { ThemeProvider } from './components/theme/theme-provider'
 import { ModalContainer } from './components/ui/modal'
 import { Toaster } from './components/ui/toaster'
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 import { COMMANDS } from './constants/commands'
 
 void invoke(COMMANDS.START_LISTENING_FOLDER)

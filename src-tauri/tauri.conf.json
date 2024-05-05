@@ -2,39 +2,36 @@
   "build": {
     "beforeDevCommand": "bun run dev",
     "beforeBuildCommand": "bun run build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist"
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "productName": "wally",
-    "version": "0.0.1"
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
   },
-  "tauri": {
-    "allowlist": {
-      "fs": {
-        "all": true,
-        "scope": ["$APP/**"]
+  "productName": "wally",
+  "version": "0.0.1",
+  "identifier": "com.velascoandrs.wally",
+  "plugins": {},
+  "app": {
+    "macOSPrivateApi": true,
+    "security": {
+      "assetProtocol": {
+        "scope": [
+          "$DOCUMENT/**",
+          "$DESKTOP/*",
+          "$DOWNLOAD/*"
+        ],
+        "enable": true
       },
-      "dialog": {
-        "all": false,
-        "ask": false,
-        "confirm": false,
-        "message": false,
-        "open": true,
-        "save": false
-      },
-      "path": {
-        "all": true
-      },
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": true
-      },
-      "protocol": {
-        "asset": true,
-        "assetScope": ["$DOCUMENT/**", "$DESKTOP/*", "$DOWNLOAD/*"]
-      }
+      "csp": null
     },
     "windows": [
       {
@@ -42,17 +39,8 @@
         "width": 350,
         "height": 600,
         "resizable": false,
-        "transparent": false
+        "transparent": true
       }
-    ],
-    "security": {
-      "csp": null
-    },
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "com.velascoandrs.wally",
-      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"]
-    }
+    ]
   }
 }

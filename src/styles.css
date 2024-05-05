@@ -72,7 +72,7 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
     overscroll-behavior: none;
   }
 
@@ -81,6 +81,7 @@
     height: 100%;
     width: 100%;
     overflow: auto;
+    background: transparent;
   }
 
   ::-webkit-scrollbar {

@@ -1,13 +1,12 @@
-import { invoke } from '@tauri-apps/api'
-import { convertFileSrc } from '@tauri-apps/api/tauri'
+import { invoke, convertFileSrc } from '@tauri-apps/api/core'
 import { createContext, useContext, useEffect, useState } from 'react'
-import { appWindow } from '@tauri-apps/api/window'
 import { type Event } from '@tauri-apps/api/event'
-import { open } from '@tauri-apps/api/dialog'
+import { open } from '@tauri-apps/plugin-dialog'
 import { documentDir } from '@tauri-apps/api/path'
 import { COMMANDS } from '@/constants/commands'
 import { EVENTS } from '@/constants/events'
 import { useToast } from '@/hooks/use-toast'
+import { getCurrent } from '@tauri-apps/api/window'
 
 interface BaseWallpaper {
   filename: string
@@ -167,17 +166,19 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
   }, [])
 
   useEffect(() => {
+    const appWindow = getCurrent()
+    console.log(appWindow)
     void appWindow.listen(EVENTS.FILES, (event: Event<FilesEventPayload>) => {
       const { payload } = event
-
       setWallpapers(payload.data.map(filePathAssetDto))
     })
   }, [])
 
   useEffect(() => {
+    const appWindow = getCurrent()
+    console.log(appWindow)
     void appWindow.listen(EVENTS.WALLPAPER, (event: Event<WallpaperEventPayload>) => {
       const { payload } = event
-
       setConfig((currentConfig) => {
         if (!currentConfig) {
           return

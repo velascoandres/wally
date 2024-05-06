@@ -72,7 +72,7 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
     overscroll-behavior: none;
   }
 
@@ -81,10 +81,11 @@
     height: 100%;
     width: 100%;
     overflow: auto;
+    background: transparent;
   }
 
   ::-webkit-scrollbar {
-    @apply w-2 bg-transparent;
+    @apply w-2 bg-primary/35;
   }
 
   ::-webkit-scrollbar-track {
@@ -92,6 +93,6 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply rounded-2xl bg-primary/70;
+    @apply rounded-2xl bg-primary/80;
   }
 }

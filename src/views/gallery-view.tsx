@@ -12,7 +12,7 @@ const GalleryView = () => {
 
   return (
     <div className="flex flex-col items-center gap-2">
-      <header className="sticky top-0 z-30 w-full bg-background/40 backdrop-blur-md">
+      <header className="search-header sticky top-0 z-30 w-full">
         <SearchBox placeholder="Search in gallery" onSearch={handleSearch} />
       </header>
       <section className="mx-5 flex flex-row flex-wrap justify-center gap-2 py-4">
@@ -24,7 +24,7 @@ const GalleryView = () => {
             imageUrl={assetPath}
           >
             {config?.currentPicture !== systemPath && (
-              <Button onClick={() => void changeWallpaper(systemPath)} variant="outline">
+              <Button onClick={() => void changeWallpaper({ picturePath: systemPath, filename })} variant="outline">
                 <Wallpaper className="mr-2 h-5 w-5" /> Set desktop picture
               </Button>
             )}

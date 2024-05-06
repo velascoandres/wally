@@ -1,6 +1,7 @@
 use crate::{models::config::ExtendedWallpaperConfig, state::AppState, utils};
 use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
 use serde::Serialize;
+use tauri::Manager;
 use std::{
     path::Path,
     sync::{mpsc::channel, Arc},
@@ -97,11 +98,15 @@ pub fn init_listen(window: tauri::Window, state: tauri::State<AppState>) {
 
 #[tauri::command]
 pub fn listen_playlist(window: tauri::Window, state: tauri::State<AppState>) {
-    let config_lock: Arc<std::sync::RwLock<crate::models::manager::WallpaperConfigManager>> = Arc::clone(&state.0);
+    let config_lock: Arc<std::sync::RwLock<crate::models::manager::WallpaperConfigManager>> =
+        Arc::clone(&state.0);
 
     std::thread::spawn(move || loop {
         // get config -> folder, current_picture
-        let mut config_guard: std::sync::RwLockWriteGuard<'_, crate::models::manager::WallpaperConfigManager> = config_lock.write().unwrap();
+        let mut config_guard: std::sync::RwLockWriteGuard<
+            '_,
+            crate::models::manager::WallpaperConfigManager,
+        > = config_lock.write().unwrap();
 
         if !config_guard.get_picture_config().playlist_enable {
             continue;
@@ -126,7 +131,7 @@ pub fn listen_playlist(window: tauri::Window, state: tauri::State<AppState>) {
             next_index = 0;
         }
 
-        let current_wallpaper = match files.get(next_index)  {
+        let current_wallpaper = match files.get(next_index) {
             Some(wallpaper) => wallpaper,
             None => files.first().unwrap(),
         };
@@ -149,7 +154,11 @@ pub fn listen_playlist(window: tauri::Window, state: tauri::State<AppState>) {
 }
 
 #[tauri::command]
-pub fn change_playlist_settings(playlist_time: u64, playlist_enable: bool, state: tauri::State<AppState>) {
+pub fn change_playlist_settings(
+    playlist_time: u64,
+    playlist_enable: bool,
+    state: tauri::State<AppState>,
+) {
     let config_lock = Arc::clone(&state.0);
 
     let mut config_guard = config_lock.write().unwrap();

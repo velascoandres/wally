@@ -5,9 +5,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Serialize, Debug)]
 pub struct Folder {
     pub dirname: String,
-    pub path: String
+    pub path: String,
 }
-
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct WallpaperConfig {

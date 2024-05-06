@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { GitHubLogoIcon } from '@radix-ui/react-icons'
 import { Folder, CoffeeIcon, Settings } from 'lucide-react'
-import { open } from '@tauri-apps/api/shell'
+import { open } from '@tauri-apps/plugin-shell'
 
 import {
   CommandDialog,

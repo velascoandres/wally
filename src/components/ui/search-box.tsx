@@ -32,7 +32,7 @@ export const SearchBox = ({ value, onSearch, placeholder = 'Search something' }:
       <Input
         value={inputValue}
         placeholder={placeholder}
-        className="w-full border-none pl-10 focus-visible:ring-0"
+        className="w-full rounded-none border-none bg-secondary/70 pl-10 backdrop-blur-md focus-visible:ring-0"
         onChange={handleChange}
       />
     </div>

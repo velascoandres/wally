@@ -1,13 +1,12 @@
-import { invoke } from '@tauri-apps/api'
-import { convertFileSrc } from '@tauri-apps/api/tauri'
+import { invoke, convertFileSrc } from '@tauri-apps/api/core'
 import { createContext, useContext, useEffect, useState } from 'react'
-import { appWindow } from '@tauri-apps/api/window'
 import { type Event } from '@tauri-apps/api/event'
-import { open } from '@tauri-apps/api/dialog'
+import { open } from '@tauri-apps/plugin-dialog'
 import { documentDir } from '@tauri-apps/api/path'
 import { COMMANDS } from '@/constants/commands'
 import { EVENTS } from '@/constants/events'
 import { useToast } from '@/hooks/use-toast'
+import { getCurrent } from '@tauri-apps/api/window'
 
 interface BaseWallpaper {
   filename: string
@@ -39,12 +38,17 @@ export interface WallpaperConfig {
 
 export type PlaylistSettingsOptions = Pick<WallpaperConfig, 'playlistTime' | 'playlistEnable'>
 
+type ChangeWallpaperOptions = {
+  picturePath: string
+  filename: string
+}
+
 export interface WallpaperManagerContextType {
   config?: WallpaperConfig
   isLoading: boolean
   wallpapers: GalleryWallpaper[]
 
-  changeWallpaper: (path: string) => Promise<void>
+  changeWallpaper: (options: ChangeWallpaperOptions) => Promise<void>
   changeWallpapersFolder: () => Promise<void>
   changePlaylistSettings: (settings: PlaylistSettingsOptions) => Promise<void>
 }
@@ -95,6 +99,10 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
 
       const selectedDir = await open({ defaultPath: documentsPath, directory: true })
 
+      if (!selectedDir) {
+        return
+      }
+
       await invoke(COMMANDS.CHANGE_FOLDER, { dir: selectedDir })
       const updatedConfig = await invoke<WallpaperConfigRaw>(COMMANDS.GET_WALLPAPER_CONFIG)
 
@@ -111,6 +119,7 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
       toast({
         title: '🚨 Error on changing folder',
         duration: NOTIFICATION_TIME,
+        variant: 'destructive',
       })
     }
   }
@@ -120,14 +129,14 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
     setConfig(wallpaperDto(config))
   }
 
-  const changeWallpaper = async (picturePath: string) => {
+  const changeWallpaper = async ({ picturePath, filename }: ChangeWallpaperOptions) => {
     await invoke(COMMANDS.SET_WALLPAPER, { picturePath })
 
     await reloadConfig()
 
     toast({
       title: '🚀 Wallpaper changed',
-      description: picturePath,
+      description: filename,
       duration: NOTIFICATION_TIME,
     })
   }
@@ -146,6 +155,7 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
       toast({
         title: '🚨 Error on updating playlist settings',
         duration: NOTIFICATION_TIME,
+        variant: 'destructive',
       })
     }
   }
@@ -167,17 +177,19 @@ export const WallpaperManagerProvider = ({ children }: Props) => {
   }, [])
 
   useEffect(() => {
+    const appWindow = getCurrent()
+
     void appWindow.listen(EVENTS.FILES, (event: Event<FilesEventPayload>) => {
       const { payload } = event
-
       setWallpapers(payload.data.map(filePathAssetDto))
     })
   }, [])
 
   useEffect(() => {
+    const appWindow = getCurrent()
+    console.log(appWindow)
     void appWindow.listen(EVENTS.WALLPAPER, (event: Event<WallpaperEventPayload>) => {
       const { payload } = event
-
       setConfig((currentConfig) => {
         if (!currentConfig) {
           return
